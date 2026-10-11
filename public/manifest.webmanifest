@@ -1,0 +1,10 @@
+{
+  "name": "SameSalt",
+  "short_name": "SameSalt",
+  "description": "Same medicine, lower price: same-salt brands, Jan Aushadhi price and the nearest Kendra.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0a7a4b",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

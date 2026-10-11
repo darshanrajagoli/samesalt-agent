@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SameSalt impact</title>
+  <meta name="description" content="Live, anonymous impact data from real SameSalt lookups: medicines checked, savings found, people who switched.">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    :root { --bar: #0a7a4b; }
+    @media (prefers-color-scheme: dark) { :root { --bar: #3aa860; } }
+    main { max-width: 760px; }
+    .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 20px 0; }
+    @media (min-width: 640px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    .tile { background: var(--surface); border-radius: 16px; padding: 16px; min-width: 0; }
+    .tile .v { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin: 0; line-height: 1.15; }
+    .tile .l { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+    .chart-wrap { position: relative; }
+    .chart { width: 100%; height: 200px; display: block; }
+    .chart .grid { stroke: var(--line); stroke-width: 1; }
+    .chart .axis { fill: var(--muted); font: 11px var(--font); }
+    .chart .bar { fill: var(--bar); }
+    .chart .hit { fill: transparent; cursor: default; }
+    .chart .hit:hover + .bar, .chart .bar.on { opacity: .8; }
+    .tip { position: absolute; pointer-events: none; background: var(--text); color: var(--bg); font-size: 13px; padding: 6px 9px; border-radius: 8px; white-space: nowrap; transform: translate(-50%, -110%); opacity: 0; transition: opacity .1s; }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { text-align: left; padding: 9px 0; border-top: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 500; font-size: 13px; border-top: 0; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .two { display: grid; gap: 14px; }
+    @media (min-width: 640px) { .two { grid-template-columns: 1fr 1fr; } }
+    .empty { color: var(--muted); padding: 8px 0; margin: 0; }
+    h2 { font-size: 17px; margin: 0 0 8px; }
+    .method { font-size: 14px; color: var(--muted); }
+    .method li { margin: 6px 0; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/" aria-label="SameSalt home">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="14" rx="7" fill="currentColor" opacity=".14"/><rect x="3" y="9" width="13" height="14" rx="7" fill="currentColor"/></svg>
+      <span>SameSalt</span>
+    </a>
+    <a href="/">Check a medicine</a>
+  </header>
+  <main>
+    <h1>Impact</h1>
+    <p class="lede">Live numbers from real lookups only. Test traffic is excluded. Nothing here can identify a person.</p>
+
+    <div class="tiles" id="tiles"></div>
+
+    <div class="card">
+      <h2>Lookups per day</h2>
+      <div class="chart-wrap" id="chartWrap"><p class="empty">Loading…</p></div>
+    </div>
+
+    <div class="two" style="margin-top:14px">
+      <div class="card"><h2>Languages</h2><div id="langs"></div></div>
+      <div class="card"><h2>Where (PIN prefix)</h2><div id="pins"></div></div>
+    </div>
+
+    <div class="card" style="margin-top:14px"><h2>Most-checked medicines</h2><div id="meds"></div></div>
+
+    <div class="card method" style="margin-top:14px">
+      <h2 style="color:var(--text)">How these numbers are made</h2>
+      <ul>
+        <li>One row per completed lookup: time, matched medicine, its price per unit, the cheapest same-salt brand and the Jan Aushadhi price per unit, language, the first 3 digits of the PIN code if typed, and an optional "did you switch?" answer.</li>
+        <li>No photos (they are read in memory and discarded), names, phone numbers, IP addresses or precise locations are stored.</li>
+        <li><b>Saving found</b> = (scanned brand price − cheaper of lowest-priced same-salt brand and Jan Aushadhi) per unit × units in the scanned pack. It is the saving <i>available</i> on one pack, not money actually saved.</li>
+        <li><b>Reported saving</b> counts only lookups where the person tapped "Yes, I switched".</li>
+        <li>Brand prices are printed MRPs from a November 2022 dataset; Jan Aushadhi prices are from the official PMBJP list (date shown in the app).</li>
+        <li>Test traffic (automated evals, demo recordings, developer checks) is flagged and excluded: <span id="testCount">—</span> test lookups excluded so far.</li>
+        <li>Raw aggregate JSON: <a href="/api/impact">/api/impact</a></li>
+      </ul>
+    </div>
+  </main>
+  <footer class="foot"><p>SameSalt · open source (MIT) · <a href="https://github.com/darshanrajagoli/samesalt-agent">GitHub</a></p></footer>
+
+  <script type="module">
+    const $ = (s) => document.querySelector(s);
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const inr = (x) => '₹' + Math.round(+x || 0).toLocaleString('en-IN');
+    const num = (x) => (+x || 0).toLocaleString('en-IN');
+    const LANG = { en: 'English', kn: 'ಕನ್ನಡ (Kannada)', hi: 'हिन्दी (Hindi)' };
+
+    const d = await fetch('/api/impact').then((r) => r.json()).catch(() => null);
+    if (!d) { $('#chartWrap').innerHTML = '<p class="empty">Could not load impact data.</p>'; throw new Error('load'); }
+    const T = d.totals || {};
+    const tiles = [
+      [num(T.lookups), 'medicine lookups'],
+      [num(T.devices), 'people (anonymous browsers)'],
+      [inr(T.potential_saving), 'saving found, one pack each'],
+      [num(T.switched_yes), 'said they switched'],
+      [inr(T.reported_saving), 'saving reported by switchers'],
+      [num(T.volunteer_lookups), 'lookups with a volunteer'],
+    ];
+    $('#tiles').innerHTML = tiles.map(([v, l]) => `<div class="tile"><p class="v">${esc(v)}</p><p class="l">${esc(l)}</p></div>`).join('');
+    $('#testCount').textContent = num(d.excluded_test_lookups);
+
+    // Lookups per day: single series, so no legend; hover tooltip per bar; table below for exact values.
+    const days = d.by_day || [];
+    if (!days.length) {
+      $('#chartWrap').innerHTML = '<p class="empty">No real lookups yet. The field pilot starts in late October 2026.</p>';
+    } else {
+      const W = 700, H = 200, P = { l: 32, r: 8, t: 10, b: 24 };
+      const max = Math.max(...days.map((x) => x.n), 1);
+      const step = (W - P.l - P.r) / days.length;
+      const bw = Math.max(2, Math.min(28, step - 2));
+      const y = (v) => P.t + (H - P.t - P.b) * (1 - v / max);
+      const ticks = [0, Math.ceil(max / 2), max];
+      let svg = `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Lookups per day">`;
+      for (const tk of ticks) svg += `<line class="grid" x1="${P.l}" x2="${W - P.r}" y1="${y(tk)}" y2="${y(tk)}"/><text class="axis" x="${P.l - 6}" y="${y(tk) + 4}" text-anchor="end">${tk}</text>`;
+      days.forEach((x, i) => {
+        const cx = P.l + step * i + (step - bw) / 2;
+        const top = y(x.n), h = Math.max(1, H - P.b - top);
+        svg += `<rect class="hit" x="${P.l + step * i}" y="${P.t}" width="${step}" height="${H - P.t - P.b}" data-i="${i}"/>`;
+        svg += `<path class="bar" data-b="${i}" d="M${cx},${H - P.b} v${-(h - Math.min(4, h))} q0,-${Math.min(4, h)} ${Math.min(4, bw / 2)},-${Math.min(4, h)} h${bw - 2 * Math.min(4, bw / 2)} q${Math.min(4, bw / 2)},0 ${Math.min(4, bw / 2)},${Math.min(4, h)} v${h - Math.min(4, h)} z"/>`;
+      });
+      const first = days[0].day, lastd = days[days.length - 1].day;
+      svg += `<text class="axis" x="${P.l}" y="${H - 6}">${first}</text><text class="axis" x="${W - P.r}" y="${H - 6}" text-anchor="end">${lastd}</text></svg>`;
+      $('#chartWrap').innerHTML = svg + '<div class="tip" id="tip"></div>';
+      const tip = $('#tip');
+      for (const r of document.querySelectorAll('.chart .hit')) {
+        r.addEventListener('mouseenter', (e) => {
+          const x = days[+r.dataset.i];
+          document.querySelectorAll('.chart .bar').forEach((b) => b.classList.toggle('on', b.dataset.b === r.dataset.i));
+          tip.textContent = `${x.day}: ${x.n} lookups · ${inr(x.saving)} found`;
+          const box = $('#chartWrap').getBoundingClientRect(), rb = r.getBoundingClientRect();
+          tip.style.left = `${rb.left - box.left + rb.width / 2}px`;
+          tip.style.top = `${rb.top - box.top + 20}px`;
+          tip.style.opacity = 1;
+        });
+        r.addEventListener('mouseleave', () => { tip.style.opacity = 0; document.querySelectorAll('.chart .bar').forEach((b) => b.classList.remove('on')); });
+      }
+    }
+
+    const table = (rows, cols) => rows.length
+      ? `<table><thead><tr>${cols.map((c) => `<th class="${c.num ? 'num' : ''}">${c.h}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="${c.num ? 'num' : ''}">${esc(c.f(r))}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+      : '<p class="empty">No data yet.</p>';
+    $('#langs').innerHTML = table(d.by_language || [], [{ h: 'Language', f: (r) => LANG[r.lang] || r.lang }, { h: 'Lookups', num: 1, f: (r) => num(r.n) }]);
+    $('#pins').innerHTML = table(d.by_pin_prefix || [], [{ h: 'PIN', f: (r) => `${r.pin3}xxx` }, { h: 'Lookups', num: 1, f: (r) => num(r.n) }]);
+    $('#meds').innerHTML = table(d.top_medicines || [], [{ h: 'Medicine', f: (r) => r.medicine }, { h: 'Lookups', num: 1, f: (r) => num(r.n) }, { h: 'Avg saving / pack', num: 1, f: (r) => (r.avg_saving > 0 ? inr(r.avg_saving) : '—') }]);
+  </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SameSalt volunteer mode</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .qr { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .qr img { width: 168px; height: 168px; border-radius: 12px; background: #fff; padding: 6px; }
+    ol.stepsv { padding-left: 22px; }
+    ol.stepsv li { margin: 10px 0; }
+    .kn { font-family: 'Noto Sans Kannada', var(--font); }
+    @media print { .top, .foot, .noprint { display: none !important; } body { background: #fff; color: #000; } .card { border: 1px solid #ccc; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/"><svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="14" rx="7" fill="currentColor" opacity=".14"/><rect x="3" y="9" width="13" height="14" rx="7" fill="currentColor"/></svg><span>SameSalt</span></a>
+    <a href="/impact">Impact</a>
+  </header>
+  <main>
+    <h1>Volunteer mode</h1>
+    <p class="lede">For NGO and ASHA volunteers helping patients check their medicines. Lookups made in volunteer mode are counted separately on the <a href="/impact">impact page</a>. No patient names or numbers are ever entered or stored.</p>
+
+    <div class="card qr">
+      <img src="/qr-volunteer.svg" alt="QR code that opens SameSalt in volunteer mode">
+      <div>
+        <p style="margin:0 0 10px"><b>Scan to open SameSalt in volunteer mode</b><br><span class="kn">ಸ್ವಯಂಸೇವಕ ಮೋಡ್‌ನಲ್ಲಿ SameSalt ತೆರೆಯಲು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ</span></p>
+        <a class="primary noprint" href="/?volunteer=1&lang=kn" style="display:inline-flex;width:auto;min-height:48px;padding:10px 18px;font-size:16px">Turn on volunteer mode</a>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2 style="font-size:18px;margin:0">With each patient (English)</h2>
+      <ol class="stepsv">
+        <li>Ask which language they prefer and tap it at the top (ಕನ್ನಡ / हिन्दी / English).</li>
+        <li>Type the patient's PIN code once (it is remembered on this phone).</li>
+        <li>Tap <b>Scan a medicine strip</b> and photograph the side with the name and composition. Or type the name.</li>
+        <li>Read the answer aloud (or tap <b>Listen</b>). Show the lowest-priced same-salt brands and the Jan Aushadhi option.</li>
+        <li>Always say: <b>"Check with your doctor or pharmacist before switching."</b> Never advise on dose or on stopping a medicine.</li>
+        <li>If a red warning appears (blood thinners, thyroid, epilepsy, transplant medicines), do not suggest a switch.</li>
+        <li>Tap <b>Show to the pharmacist</b> if they want to ask at the counter.</li>
+        <li>When you meet the patient again, ask whether they switched and tap the answer on a new lookup of the same medicine.</li>
+      </ol>
+    </div>
+
+    <div class="card kn" style="margin-top:14px" lang="kn">
+      <h2 style="font-size:18px;margin:0">ಪ್ರತಿ ರೋಗಿಯೊಂದಿಗೆ (ಕನ್ನಡ)</h2>
+      <ol class="stepsv">
+        <li>ಅವರಿಗೆ ಯಾವ ಭಾಷೆ ಬೇಕು ಎಂದು ಕೇಳಿ, ಮೇಲ್ಭಾಗದಲ್ಲಿ ಅದನ್ನು ಒತ್ತಿ (ಕನ್ನಡ / हिन्दी / English).</li>
+        <li>ರೋಗಿಯ ಪಿನ್ ಕೋಡ್ ಅನ್ನು ಒಮ್ಮೆ ಟೈಪ್ ಮಾಡಿ (ಈ ಫೋನ್ ಅದನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತದೆ).</li>
+        <li><b>ಔಷಧಿ ಸ್ಟ್ರಿಪ್ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ</b> ಒತ್ತಿ, ಹೆಸರು ಮತ್ತು ಸಂಯೋಜನೆ ಇರುವ ಭಾಗದ ಫೋಟೋ ತೆಗೆಯಿರಿ. ಅಥವಾ ಹೆಸರನ್ನು ಟೈಪ್ ಮಾಡಿ.</li>
+        <li>ಉತ್ತರವನ್ನು ಜೋರಾಗಿ ಓದಿ (ಅಥವಾ <b>ಕೇಳಿ</b> ಒತ್ತಿ). ಅದೇ ಸಾಲ್ಟ್‌ನ ಕಡಿಮೆ ಬೆಲೆಯ ಬ್ರ್ಯಾಂಡ್‌ಗಳು ಮತ್ತು ಜನ ಔಷಧಿ ಆಯ್ಕೆಯನ್ನು ತೋರಿಸಿ.</li>
+        <li>ಯಾವಾಗಲೂ ಹೇಳಿ: <b>"ಬದಲಾಯಿಸುವ ಮೊದಲು ನಿಮ್ಮ ವೈದ್ಯರು ಅಥವಾ ಫಾರ್ಮಸಿಸ್ಟ್ ಅವರನ್ನು ಕೇಳಿ."</b> ಡೋಸ್ ಬಗ್ಗೆ ಅಥವಾ ಔಷಧಿ ನಿಲ್ಲಿಸುವ ಬಗ್ಗೆ ಎಂದಿಗೂ ಸಲಹೆ ನೀಡಬೇಡಿ.</li>
+        <li>ಕೆಂಪು ಎಚ್ಚರಿಕೆ ಕಂಡರೆ (ರಕ್ತ ತೆಳುವಾಗಿಸುವ, ಥೈರಾಯ್ಡ್, ಮೂರ್ಛೆ ರೋಗ, ಅಂಗಾಂಗ ಕಸಿ ಔಷಧಿಗಳು), ಬದಲಾವಣೆಯನ್ನು ಸೂಚಿಸಬೇಡಿ.</li>
+        <li>ಅಂಗಡಿಯಲ್ಲಿ ಕೇಳಬೇಕಾದರೆ <b>ಫಾರ್ಮಸಿಸ್ಟ್‌ಗೆ ತೋರಿಸಿ</b> ಒತ್ತಿ.</li>
+        <li>ರೋಗಿಯನ್ನು ಮತ್ತೆ ಭೇಟಿಯಾದಾಗ, ಅವರು ಬದಲಾಯಿಸಿದರೇ ಎಂದು ಕೇಳಿ, ಅದೇ ಔಷಧಿಯನ್ನು ಮತ್ತೆ ಹುಡುಕಿ ಉತ್ತರವನ್ನು ಒತ್ತಿ.</li>
+      </ol>
+    </div>
+    <p class="hint noprint"><a href="javascript:print()">Print this page</a> · Full pilot guide: <a href="https://github.com/darshanrajagoli/samesalt-agent/blob/main/docs/PILOT.md">docs/PILOT.md</a></p>
+  </main>
+  <footer class="foot"><p>SameSalt · <a href="/">Check a medicine</a></p></footer>
+</body>
+</html>

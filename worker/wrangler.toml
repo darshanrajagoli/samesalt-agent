@@ -1,0 +1,25 @@
+name = "samesalt-agent"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+# Static web app (public/). /api/* is handled by the Worker first.
+[assets]
+directory = "../public"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"
+run_worker_first = ["/api/*"]
+
+# Reference data + anonymous impact log (free tier).
+[[d1_databases]]
+binding = "DB"
+database_name = "samesalt-agent"
+database_id = "6fb78eb9-9f2d-427d-b111-7d8a74f769da"
+migrations_dir = "migrations"
+
+# Vision + text models (Workers AI free allocation).
+[ai]
+binding = "AI"
+
+[observability]
+enabled = true

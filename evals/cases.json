@@ -1,0 +1,144 @@
+{
+ "name": "samesalt-identify-and-match",
+ "description": "15 synthetic strip photos, 3 deliberately hard photos (heavy blur, cropped, a brand that is not in the database) and 5 typed queries (incl. Kannada and Hindi script). A case passes only if the agent picks the right medicine (exact canonical key: salts + strengths + form + release) and the safety behaviour is right.",
+ "cases": [
+  {
+   "id": "img-dolo650",
+   "image": "images/dolo650.jpg",
+   "expect_name": "Dolo 650 Tablet",
+   "expect_ckey": "paracetamol:650mg|tablet"
+  },
+  {
+   "id": "img-pan40",
+   "image": "images/pan40.jpg",
+   "expect_name": "PAN 40 Tablet",
+   "expect_ckey": "pantoprazole:40mg|tablet"
+  },
+  {
+   "id": "img-augmentin625",
+   "image": "images/augmentin625.jpg",
+   "expect_name": "Augmentin 625 Duo Tablet",
+   "expect_ckey": "amoxicillin:500mg+clavulanic acid:125mg|tablet"
+  },
+  {
+   "id": "img-telma40",
+   "image": "images/telma40.jpg",
+   "expect_name": "Telma 40 Tablet",
+   "expect_ckey": "telmisartan:40mg|tablet"
+  },
+  {
+   "id": "img-glycomet-sr",
+   "image": "images/glycomet500sr.jpg",
+   "expect_name": "Glycomet 500 SR Tablet",
+   "expect_ckey": "metformin:500mg|tablet|SR"
+  },
+  {
+   "id": "img-azithral500",
+   "image": "images/azithral500.jpg",
+   "expect_name": "Azithral 500 Tablet",
+   "expect_ckey": "azithromycin:500mg|tablet"
+  },
+  {
+   "id": "img-ecosprin75",
+   "image": "images/ecosprin75.jpg",
+   "expect_name": "Ecosprin 75 Tablet",
+   "expect_ckey": "aspirin:75mg|tablet"
+  },
+  {
+   "id": "img-amlokind5",
+   "image": "images/amlokind5.jpg",
+   "expect_name": "Amlokind 5 Tablet",
+   "expect_ckey": "amlodipine:5mg|tablet"
+  },
+  {
+   "id": "img-montair10",
+   "image": "images/montair10.jpg",
+   "expect_name": "Montair 10 Tablet",
+   "expect_ckey": "montelukast:10mg|tablet"
+  },
+  {
+   "id": "img-thyronorm50",
+   "image": "images/thyronorm50.jpg",
+   "expect_name": "Thyronorm 50mcg Tablet",
+   "expect_ckey": "thyroxine:0.05mg|tablet",
+   "expect_nti": true
+  },
+  {
+   "id": "img-crocin-pr",
+   "image": "images/crocinpr.jpg",
+   "expect_name": "Crocin Pain Relief Tablet",
+   "expect_ckey": "caffeine:50mg+paracetamol:650mg|tablet"
+  },
+  {
+   "id": "img-atorva20",
+   "image": "images/atorva20.jpg",
+   "expect_name": "Atorva 20 Tablet",
+   "expect_ckey": "atorvastatin:20mg|tablet"
+  },
+  {
+   "id": "img-ecosprin-av",
+   "image": "images/ecosprinav.jpg",
+   "expect_name": "Ecosprin AV 75/20 Capsule",
+   "expect_ckey": "aspirin:75mg+atorvastatin:20mg|capsule"
+  },
+  {
+   "id": "img-allegra120",
+   "image": "images/allegra120.jpg",
+   "expect_name": "Allegra 120mg Tablet",
+   "expect_ckey": "fexofenadine:120mg|tablet"
+  },
+  {
+   "id": "img-rosuvas10",
+   "image": "images/rosuvas10.jpg",
+   "expect_ckey": "rosuvastatin:10mg|tablet"
+  },
+  {
+   "id": "hard-heavy-blur",
+   "image": "images/hard_blur_telma.jpg",
+   "expect_name": "Telma 40 Tablet",
+   "expect_ckey": "telmisartan:40mg|tablet"
+  },
+  {
+   "id": "hard-cropped",
+   "image": "images/hard_crop_pan.jpg",
+   "expect_ckey": "pantoprazole:40mg|tablet"
+  },
+  {
+   "id": "hard-unknown-brand",
+   "image": "images/hard_unknown_brand.jpg",
+   "expect_ckey": "paracetamol:650mg|tablet"
+  },
+  {
+   "id": "txt-dolo-glued",
+   "text": "dolo650",
+   "expect_name": "Dolo 650 Tablet",
+   "expect_ckey": "paracetamol:650mg|tablet"
+  },
+  {
+   "id": "txt-kannada",
+   "text": "ಡೋಲೋ 650",
+   "lang": "kn",
+   "expect_ckey": "paracetamol:650mg|tablet"
+  },
+  {
+   "id": "txt-hindi",
+   "text": "पैन 40 टैबलेट",
+   "lang": "hi",
+   "expect_name": "PAN 40 Tablet",
+   "expect_ckey": "pantoprazole:40mg|tablet"
+  },
+  {
+   "id": "txt-augmentin",
+   "text": "augmentin 625 duo",
+   "expect_name": "Augmentin 625 Duo Tablet",
+   "expect_ckey": "amoxicillin:500mg+clavulanic acid:125mg|tablet"
+  },
+  {
+   "id": "txt-telma-pin",
+   "text": "Telma 40 580001",
+   "expect_name": "Telma 40 Tablet",
+   "expect_ckey": "telmisartan:40mg|tablet",
+   "expect_pin3": "580"
+  }
+ ]
+}

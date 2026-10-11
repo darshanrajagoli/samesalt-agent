@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SameSalt — same medicine, lower price</title>
+  <meta name="description" content="Scan a medicine strip. See every brand with the exact same salt and strength, the Jan Aushadhi price, and the nearest Jan Aushadhi Kendra. English, ಕನ್ನಡ, हिन्दी.">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/" aria-label="SameSalt home">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="14" rx="7" fill="currentColor" opacity=".14"/><rect x="3" y="9" width="13" height="14" rx="7" fill="currentColor"/></svg>
+      <span>SameSalt</span>
+    </a>
+    <div class="langs" role="radiogroup" aria-label="Language" id="langs"></div>
+  </header>
+
+  <main id="app">
+    <section id="home" class="home">
+      <h1 data-t="tagline">Same medicine. Lower price.</h1>
+      <p class="lede" data-t="intro"></p>
+
+      <label class="primary" id="scanBtn">
+        <input id="photo" type="file" accept="image/*" capture="environment" hidden>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.8l1.4-2h6.6l1.4 2h1.8A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg>
+        <span data-t="scan">Scan a medicine strip</span>
+      </label>
+      <p class="hint" data-t="scanHint"></p>
+
+      <div class="divider"><span data-t="orType">or type the name</span></div>
+
+      <form id="typeForm" class="type-form" autocomplete="off">
+        <input id="nameInput" name="q" type="text" inputmode="text" enterkeyhint="search" data-tp="placeholder" aria-label="Medicine name" maxlength="120">
+        <button type="submit" class="secondary" data-t="check">Check</button>
+      </form>
+
+      <div class="pin-row">
+        <label for="pinInput" class="pin-label"><span data-t="pinLabel">PIN code (optional)</span><small data-t="pinHint"></small></label>
+        <div class="pin-field">
+          <input id="pinInput" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="580001" aria-label="PIN code">
+          <button type="button" id="locBtn" class="link" data-t="useLocation">Use my location</button>
+        </div>
+      </div>
+
+      <div class="volunteer-banner" id="volBanner" hidden data-t="volunteerOn"></div>
+    </section>
+
+    <section id="busy" class="busy" hidden aria-live="polite">
+      <img id="thumb" alt="" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="busyText"></p>
+    </section>
+
+    <section id="result" class="result" hidden aria-live="polite"></section>
+  </main>
+
+  <footer class="foot">
+    <p data-t="privacy"></p>
+    <p class="foot-links">
+      <a href="/impact" data-t="impactLink">See the impact</a>
+      <span aria-hidden="true">·</span>
+      <a href="/volunteer" data-t="volunteer">Volunteer mode</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://github.com/darshanrajagoli/samesalt-agent">GitHub</a>
+    </p>
+    <p class="data-note" id="dataNote"></p>
+  </footer>
+
+  <dialog id="pharmacist" class="pharmacist">
+    <p class="ph-lead" data-t="pharmacistCard"></p>
+    <p class="ph-comp" id="phComp"></p>
+    <p class="ph-sub" id="phSub"></p>
+    <form method="dialog"><button class="secondary" data-t="close">Close</button></form>
+  </dialog>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
