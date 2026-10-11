@@ -4,7 +4,7 @@
 
 **Live app:** https://samesalt-agent.samesalt-worker.workers.dev · **Impact dashboard:** https://samesalt-agent.samesalt-worker.workers.dev/impact · **Volunteer mode + QR:** https://samesalt-agent.samesalt-worker.workers.dev/volunteer
 
-Entry for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**, Health track. Built in **AgentFoundry** ([how](#how-agentfoundry-was-used)). Field pilot planned with **Uttara Karnataka Sneha Loka (UKSL)**, North Karnataka, from late October 2026 ([pilot guide](docs/PILOT.md)).
+Entry for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**, Health track ([submission #24](https://github.com/karlmehta/code-for-a-billion/issues/24)). Built in **AgentFoundry** ([how](#how-agentfoundry-was-used)). Field pilot planned with **Uttara Karnataka Sneha Loka (UKSL)**, North Karnataka, from late October 2026 ([pilot guide](docs/PILOT.md)).
 
 ![SameSalt on a phone: home, the same-salt list for Dolo 650, and the answer in Kannada](docs/img/screens.png)
 
@@ -64,6 +64,7 @@ The agent is a **fixed, auditable tool plan** — `read_strip → identify_medic
 | `public/` | the web app, `/impact`, `/volunteer` |
 | `data/` | builds D1 seed SQL from SameSalt's database and the official PMBJP lists |
 | `.codenow/` | AgentFoundry project: agent manifest, prompts, evals + results, run traces |
+| `tools/demo-video/` | records the live app on a phone viewport (flagged as test traffic) and composes the captioned demo video |
 
 **Cost: ₹0.** Cloudflare Workers + D1 + Workers AI free allocations; no paid keys. If the daily free vision quota runs out, the phone reads the photo itself with Tesseract.js and the same tools run on that text.
 
