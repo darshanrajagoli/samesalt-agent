@@ -42,7 +42,9 @@ function applyStrings() {
   for (const el of document.querySelectorAll('[data-t]')) el.textContent = t(lang, el.dataset.t);
   for (const el of document.querySelectorAll('[data-tp]')) el.placeholder = t(lang, el.dataset.tp);
   $('#volBanner').hidden = !volunteer;
-  $('#dataNote').textContent = t(lang, 'dataNote', { date: last?.data?.ja_list_date || '—' });
+  const jaDate = last?.data?.ja_list_date;
+  const note = t(lang, 'dataNote', { date: jaDate || '' });
+  $('#dataNote').textContent = jaDate ? note : note.split(/(?<=[.।;])\s/)[0];
 }
 function setLang(code) {
   lang = code;
@@ -125,11 +127,15 @@ async function ask({ text, image, ocr, relog = true }) {
     nolog: relog ? undefined : true,
   };
   let r;
-  try {
-    const res = await fetch('/api/ask', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-    r = await res.json();
-  } catch {
-    r = { status: 'error' };
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch('/api/ask', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+      r = await res.json();
+    } catch {
+      r = { status: 'error' };
+    }
+    if (r.status !== 'error' && !r.error) break;
+    await new Promise((ok) => setTimeout(ok, 2000)); // one quiet retry on a network/server hiccup
   }
   if (r.status === 'vision_unavailable' && image) {
     // Free vision quota used up or model down: read the photo on the phone instead.
@@ -184,7 +190,7 @@ function render(r) {
   const listHtml = items.slice(0, 6).map((x) => `
     <li class="${x.name.toLowerCase() === m.name.toLowerCase() ? 'yours' : ''}">
       <div><div class="n">${esc(x.name)}${x.name.toLowerCase() === m.name.toLowerCase() ? `<span class="tag">${esc(t(lang, 'yours'))}</span>` : ''}</div><div class="m">${esc(x.manufacturer || '')}</div></div>
-      <div class="p"><b>${rupees(x.unit_price)}</b><span>${esc(per)}</span><span> · ${esc(t(lang, 'packOf', { n: Math.round(x.pack), price: rupees(x.price) }))}</span></div>
+      <div class="p"><b>${rupees(x.unit_price)}</b><span>${esc(per)}</span><span>${esc(t(lang, 'packOf', { n: Math.round(x.pack), price: rupees(x.price) }))}</span></div>
     </li>`).join('');
   const yoursRow = !yoursInList && m.unit_price ? `
     <li class="yours"><div><div class="n">${esc(m.name)}<span class="tag">${esc(t(lang, 'yours'))}</span></div><div class="m">${esc(m.manufacturer || '')}</div></div>

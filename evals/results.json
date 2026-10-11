@@ -1,9 +1,9 @@
 {
   "summary": {
-    "when": "2026-10-11T04:30:56.830Z",
+    "when": "2026-10-11T05:16:34.735Z",
     "target": "https://samesalt-agent.samesalt-worker.workers.dev",
-    "cases": 20,
-    "passed": 20,
+    "cases": 23,
+    "passed": 23,
     "accuracy": 1,
     "composition_key_accuracy": 1,
     "photos": {
@@ -14,13 +14,16 @@
       "cases": 5,
       "passed": 5
     },
-    "median_ms": 2560
+    "photo_composition_agrees_with_brand": "15/15",
+    "median_ms": 1715
   },
   "results": [
     {
       "id": "img-dolo650",
       "pass": true,
-      "ms": 2560,
+      "ms": 1863,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -39,14 +42,17 @@
           "composition": "Paracetamol (650mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-pan40",
       "pass": true,
-      "ms": 5979,
+      "ms": 2259,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -65,14 +71,17 @@
           "composition": "Pantoprazole (40mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-augmentin625",
       "pass": true,
-      "ms": 3212,
+      "ms": 1868,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -91,14 +100,17 @@
           "composition": "Amoxycillin (500mg) + Clavulanic Acid (125mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-telma40",
       "pass": true,
-      "ms": 2043,
+      "ms": 1640,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -117,14 +129,17 @@
           "composition": "Telmisartan (40mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-glycomet-sr",
       "pass": true,
-      "ms": 1775,
+      "ms": 2745,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -136,21 +151,24 @@
       "got": {
         "name": "Glycomet 500 SR Tablet",
         "ckey": "metformin:500mg|tablet|SR",
-        "via": "brand",
+        "via": "brand+composition",
         "read": {
           "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
           "brand": "GLYCOMET-500 SR",
           "composition": "Metformin Hydrochloride (500mg)",
           "form": "tablet",
           "release": "SR"
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-azithral500",
       "pass": true,
-      "ms": 1820,
+      "ms": 2606,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -169,14 +187,17 @@
           "composition": "Azithromycin (500mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-ecosprin75",
       "pass": true,
-      "ms": 1786,
+      "ms": 1437,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -195,14 +216,17 @@
           "composition": "Aspirin (75mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-amlokind5",
       "pass": true,
-      "ms": 4862,
+      "ms": 2131,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -214,21 +238,24 @@
       "got": {
         "name": "Amlokind 5 Tablet",
         "ckey": "amlodipine:5mg|tablet",
-        "via": "brand",
+        "via": "brand+composition",
         "read": {
           "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
           "brand": "AMLOKIND-5",
           "composition": "Amlodipine Besilate I.P. eq. to Amlodipine (5 mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-montair10",
       "pass": true,
-      "ms": 4052,
+      "ms": 1959,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -240,21 +267,24 @@
       "got": {
         "name": "Montair 10 Tablet",
         "ckey": "montelukast:10mg|tablet",
-        "via": "brand",
+        "via": "brand+composition",
         "read": {
           "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
           "brand": "MONTAIR 10",
           "composition": "Montelukast Sodium I.P. eq. to Montelukast 10 mg",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-thyronorm50",
       "pass": true,
-      "ms": 2244,
+      "ms": 1675,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -266,21 +296,24 @@
       "got": {
         "name": "Thyronorm 50mcg Tablet",
         "ckey": "thyroxine:0.05mg|tablet",
-        "via": "brand",
+        "via": "brand+composition",
         "read": {
           "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
           "brand": "THYRONORM 50 mcg",
           "composition": "Thyroxine Sodium (50 mcg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-crocin-pr",
       "pass": true,
-      "ms": 3715,
+      "ms": 1715,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -299,14 +332,17 @@
           "composition": "Paracetamol (650mg) + Caffeine (50mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-atorva20",
       "pass": true,
-      "ms": 2656,
+      "ms": 1343,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -325,14 +361,17 @@
           "composition": "Atorvastatin (20mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-ecosprin-av",
       "pass": true,
-      "ms": 7102,
+      "ms": 1763,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -351,14 +390,17 @@
           "composition": "Aspirin (75mg) + Atorvastatin (20mg)",
           "form": "capsule",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-allegra120",
       "pass": true,
-      "ms": 2938,
+      "ms": 1712,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -370,21 +412,24 @@
       "got": {
         "name": "Allegra 120mg Tablet",
         "ckey": "fexofenadine:120mg|tablet",
-        "via": "brand",
+        "via": "brand+composition",
         "read": {
           "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
           "brand": "ALLEGRA 120 mg",
           "composition": "Fexofenadine Hydrochloride 120 mg",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "img-rosuvas10",
       "pass": true,
-      "ms": 3269,
+      "ms": 2376,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -396,21 +441,111 @@
       "got": {
         "name": "Rosuvas 10 Tablet",
         "ckey": "rosuvastatin:10mg|tablet",
-        "via": "brand",
+        "via": "brand+composition",
         "read": {
           "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
           "brand": "ROSUVAS 10",
-          "composition": "Rosuvastatin Calcium I.P. eq. to Rosuvastatin 10 mg",
+          "composition": "Rosuvastatin Calcium (10mg)",
           "form": "tablet",
           "release": ""
-        }
+        },
+        "composition_agrees": true
+      },
+      "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
+    },
+    {
+      "id": "hard-heavy-blur",
+      "pass": true,
+      "ms": 1598,
+      "retried": false,
+      "error": null,
+      "checks": {
+        "found": true,
+        "ckey": true,
+        "name": true,
+        "nti": true,
+        "pin3": null,
+        "safety_line": true
+      },
+      "got": {
+        "name": "Telma 40 Tablet",
+        "ckey": "telmisartan:40mg|tablet",
+        "via": "brand+composition",
+        "read": {
+          "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
+          "brand": "TELMA 40",
+          "composition": "Telmisartan (40mg)",
+          "form": "tablet",
+          "release": ""
+        },
+        "composition_agrees": true
+      },
+      "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
+    },
+    {
+      "id": "hard-cropped",
+      "pass": true,
+      "ms": 1985,
+      "retried": false,
+      "error": null,
+      "checks": {
+        "found": true,
+        "ckey": true,
+        "name": null,
+        "nti": true,
+        "pin3": null,
+        "safety_line": true
+      },
+      "got": {
+        "name": "PAN 40 Tablet",
+        "ckey": "pantoprazole:40mg|tablet",
+        "via": "brand+composition",
+        "read": {
+          "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
+          "brand": "PAN-40",
+          "composition": "Pantoprazole 40 mg",
+          "form": "tablet",
+          "release": ""
+        },
+        "composition_agrees": true
+      },
+      "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
+    },
+    {
+      "id": "hard-unknown-brand",
+      "pass": true,
+      "ms": 1826,
+      "retried": false,
+      "error": null,
+      "checks": {
+        "found": true,
+        "ckey": true,
+        "name": null,
+        "nti": true,
+        "pin3": null,
+        "safety_line": true
+      },
+      "got": {
+        "name": "PYRETOL-650",
+        "ckey": "paracetamol:650mg|tablet",
+        "via": "composition",
+        "read": {
+          "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
+          "brand": "PYRETOL-650",
+          "composition": "Paracetamol (650mg)",
+          "form": "tablet",
+          "release": ""
+        },
+        "composition_agrees": null
       },
       "vision_model": "@cf/meta/llama-4-scout-17b-16e-instruct"
     },
     {
       "id": "txt-dolo-glued",
       "pass": true,
-      "ms": 275,
+      "ms": 280,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -422,14 +557,17 @@
       "got": {
         "name": "Dolo 650 Tablet",
         "ckey": "paracetamol:650mg|tablet",
-        "via": "brand"
+        "via": "brand",
+        "composition_agrees": null
       },
       "vision_model": null
     },
     {
       "id": "txt-kannada",
       "pass": true,
-      "ms": 1068,
+      "ms": 914,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -441,14 +579,17 @@
       "got": {
         "name": "Dolo 650 Tablet",
         "ckey": "paracetamol:650mg|tablet",
-        "via": "brand"
+        "via": "brand",
+        "composition_agrees": null
       },
       "vision_model": null
     },
     {
       "id": "txt-hindi",
       "pass": true,
-      "ms": 934,
+      "ms": 879,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -460,14 +601,17 @@
       "got": {
         "name": "PAN 40 Tablet",
         "ckey": "pantoprazole:40mg|tablet",
-        "via": "brand"
+        "via": "brand",
+        "composition_agrees": null
       },
       "vision_model": null
     },
     {
       "id": "txt-augmentin",
       "pass": true,
-      "ms": 255,
+      "ms": 292,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -479,14 +623,17 @@
       "got": {
         "name": "Augmentin 625 Duo Tablet",
         "ckey": "amoxicillin:500mg+clavulanic acid:125mg|tablet",
-        "via": "brand"
+        "via": "brand",
+        "composition_agrees": null
       },
       "vision_model": null
     },
     {
       "id": "txt-telma-pin",
       "pass": true,
-      "ms": 284,
+      "ms": 290,
+      "retried": false,
+      "error": null,
       "checks": {
         "found": true,
         "ckey": true,
@@ -498,7 +645,8 @@
       "got": {
         "name": "Telma 40 Tablet",
         "ckey": "telmisartan:40mg|tablet",
-        "via": "brand"
+        "via": "brand",
+        "composition_agrees": null
       },
       "vision_model": null
     }

@@ -42,11 +42,18 @@ for (const c of suite.cases) {
   if (c.image) body.image = 'data:image/jpeg;base64,' + readFileSync(join(HERE, c.image)).toString('base64');
   const t0 = Date.now();
   let res;
-  try {
-    const r = await fetch(`${BASE}/api/ask`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-samesalt-test': '1' }, body: JSON.stringify(body) });
-    res = await r.json();
-  } catch (e) {
-    res = { status: 'error', error: String(e) };
+  let retried = false;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const r = await fetch(`${BASE}/api/ask`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-samesalt-test': '1' }, body: JSON.stringify(body) });
+      const txt = await r.text();
+      try { res = JSON.parse(txt); } catch { res = { status: 'error', error: `HTTP ${r.status}: ${txt.slice(0, 120)}` }; }
+    } catch (e) {
+      res = { status: 'error', error: String(e) };
+    }
+    if (res.status !== 'error' && !res.error) break;
+    retried = true; // one retry on a transport/5xx error, same as the web app does
+    await new Promise((ok) => setTimeout(ok, 3000));
   }
   const ms = Date.now() - t0;
   const got = res.medicine || {};
@@ -60,7 +67,8 @@ for (const c of suite.cases) {
   };
   const pass = Object.values(checks).every((v) => v === null || v === true);
   const read = res.trace?.find((s) => s.tool === 'read_strip')?.output;
-  results.push({ id: c.id, pass, ms, checks, got: { name: got.name, ckey: got.ckey, via: got.via, read }, vision_model: read?.model || null });
+  const agrees = res.trace?.find((s) => s.tool === 'identify_medicine')?.output?.composition_agrees ?? null;
+  results.push({ id: c.id, pass, ms, retried, error: res.error || null, checks, got: { name: got.name, ckey: got.ckey, via: got.via, read, composition_agrees: agrees }, vision_model: read?.model || null });
   recordRun(c, body, res, ms);
   console.log(`${pass ? 'PASS' : 'FAIL'}  ${c.id.padEnd(18)} ${String(ms).padStart(5)} ms  -> ${got.name || res.status}${pass ? '' : `  (want ${c.expect_name || c.expect_ckey})`}`);
 }
@@ -79,19 +87,20 @@ const summary = {
   composition_key_accuracy: +(keyAcc / n).toFixed(3),
   photos: { cases: imgs.length, passed: imgs.filter((r) => r.pass).length },
   typed: { cases: txts.length, passed: txts.filter((r) => r.pass).length },
+  photo_composition_agrees_with_brand: imgs.filter((r) => r.got.composition_agrees === true).length + '/' + imgs.filter((r) => r.got.composition_agrees !== null).length,
   median_ms: results.map((r) => r.ms).sort((a, b) => a - b)[Math.floor(n / 2)],
 };
 writeFileSync(join(HERE, 'results.json'), JSON.stringify({ summary, results }, null, 2));
 const md = [
   `# Eval results`,
   ``,
-  `Run ${summary.when} against ${BASE}. ${passed}/${n} cases pass (${Math.round(summary.accuracy * 100)}%); exact composition key correct in ${keyAcc}/${n}. Photos ${summary.photos.passed}/${summary.photos.cases}, typed ${summary.typed.passed}/${summary.typed.cases}. Median latency ${summary.median_ms} ms.`,
+  `Run ${summary.when} against ${BASE}. ${passed}/${n} cases pass (${Math.round(summary.accuracy * 100)}%); exact composition key correct in ${keyAcc}/${n}. Photos ${summary.photos.passed}/${summary.photos.cases}, typed ${summary.typed.passed}/${summary.typed.cases}. Median latency ${summary.median_ms} ms. On photos where both a brand and a composition were read, the composition independently agreed with the brand in ${summary.photo_composition_agrees_with_brand}.`,
   ``,
   `All photos are synthetic renders (evals/render_strips.py), not real strips: real-world accuracy will be lower and is measured in the field pilot.`,
   ``,
-  `| case | result | got | via | ms |`,
-  `|---|---|---|---|---|`,
-  ...results.map((r) => `| ${r.id} | ${r.pass ? 'pass' : '**fail**'} | ${r.got.name || '—'} | ${r.got.via || '—'} | ${r.ms} |`),
+  `| case | result | got | via | composition agrees | ms |`,
+  `|---|---|---|---|---|---|`,
+  ...results.map((r) => `| ${r.id} | ${r.pass ? 'pass' : '**fail**'} | ${r.got.name || '—'} | ${r.got.via || '—'} | ${r.got.composition_agrees ?? '—'} | ${r.ms} |`),
   ``,
 ].join('\n');
 writeFileSync(join(HERE, 'RESULTS.md'), md);

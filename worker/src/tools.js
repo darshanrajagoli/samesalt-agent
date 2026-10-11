@@ -34,6 +34,41 @@ export function nameScore(query, name) {
   return hit / q.length - 0.04 * extra - 0.15 * extraNums + (q[0] === n[0] ? 0.05 : 0);
 }
 
+// Salt-form words printed on strips ("Rosuvastatin Calcium", "Pantoprazole Sodium") that the
+// brand database usually drops. Tried only when the literal key is unknown to the database.
+const SALT_FORMS = /\s+(?:calcium|sodium|potassium|magnesium|hydrochloride|hcl|besilate|besylate|maleate|succinate|tartrate|mesylate|mesilate|fumarate|citrate|sulphate|sulfate|phosphate|hyclate|dihydrate|monohydrate|trihydrate|anhydrous|bromide|acetate)\b/gi;
+
+/** Printed composition -> text the salt parser understands. Found via an AgentFoundry Replay of a
+ *  vision run: "Rosuvastatin Calcium I.P. eq. to Rosuvastatin ..... 10 mg" produced a key no brand had. */
+export function cleanComposition(text) {
+  return String(text || '')
+    .split(/\s*\+\s*/)
+    .map((part) => {
+      let p = part.replace(/\b(?:I\.P\.|B\.P\.|U\.S\.P\.|Ph\.\s*Eur\.)/gi, ' ');
+      const eq = p.match(/\b(?:eq\.?|equiv\.?|equivalent)\s*to\s+(.*)$/i);
+      if (eq) p = eq[1];
+      p = p.replace(/\(as [^)]*\)/gi, ' ').replace(/\.{2,}/g, ' ').replace(/\banhydrous\b/gi, ' ');
+      return p.replace(/\s+/g, ' ').trim();
+    })
+    .filter(Boolean)
+    .join(' + ');
+}
+
+/** The canonical key for a printed composition, preferring a variant that brands actually use. */
+export async function resolveCompositionKey(db, composition, hints) {
+  const cleaned = cleanComposition(composition);
+  const variants = [...new Set([
+    keyFor(cleaned, hints).key,
+    keyFor(cleaned.replace(SALT_FORMS, ''), hints).key,
+    keyFor(composition, hints).key,
+  ].filter(Boolean))];
+  for (const k of variants) {
+    const hit = await db.prepare('SELECT 1 AS ok FROM medicines WHERE ckey = ?1 LIMIT 1').bind(k).first();
+    if (hit) return k;
+  }
+  return variants[0] || '';
+}
+
 /** Tool: identify_medicine. Resolve a brand name (and optional composition read off the strip) to one DB row. */
 export async function identifyMedicine(db, { brand = '', composition = '', form = '' } = {}) {
   const q = tokens(brand);
@@ -51,10 +86,7 @@ export async function identifyMedicine(db, { brand = '', composition = '', form 
 
   // Composition read from the strip, if any, gives a key to cross-check the brand guess.
   let compKey = '';
-  if (composition) {
-    const k = keyFor(composition, { name: `${brand} ${form}`, form });
-    compKey = k.key;
-  }
+  if (composition) compKey = await resolveCompositionKey(db, composition, { name: `${brand} ${form}`, form });
 
   if (candidates.length) {
     candidates.sort((a, b) => {

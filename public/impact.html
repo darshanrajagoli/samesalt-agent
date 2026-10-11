@@ -15,7 +15,7 @@
     @media (prefers-color-scheme: dark) { :root { --bar: #3aa860; } }
     main { max-width: 760px; }
     .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 20px 0; }
-    @media (min-width: 640px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 640px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     .tile { background: var(--surface); border-radius: 16px; padding: 16px; min-width: 0; }
     .tile .v { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin: 0; line-height: 1.15; }
     .tile .l { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
@@ -93,6 +93,8 @@
     const tiles = [
       [num(T.lookups), 'medicine lookups'],
       [num(T.devices), 'people (anonymous browsers)'],
+      [num(T.with_cheaper_option) + ' / ' + num(T.matched), 'matched medicines with a cheaper exact-salt option'],
+      [num(T.not_found), 'not found (to fix the data)'],
       [inr(T.potential_saving), 'saving found, one pack each'],
       [num(T.switched_yes), 'said they switched'],
       [inr(T.reported_saving), 'saving reported by switchers'],

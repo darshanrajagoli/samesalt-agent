@@ -1,0 +1,3 @@
+{"kind":"run.start","runId":"9acfa22d-8f0b-45f9-8d33-8bf95d308c95","slug":"samesalt-agent","ts":1791695446277,"input":"[photo] images/pan40.jpg","kit":"cloudflare-worker","model":"workers-ai/llama-4-scout + deterministic tools","source":"eval"}
+{"kind":"message","ts":1791695456845,"message":{"type":"result","subtype":"error","result":"error","duration_ms":10568,"model":null}}
+{"kind":"run.end","ts":1791695456845,"durationMs":10568,"status":"error","resultMessage":{"type":"result","subtype":"error","result":"error","duration_ms":10568,"model":null}}

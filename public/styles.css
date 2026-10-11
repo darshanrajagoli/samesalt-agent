@@ -131,7 +131,8 @@ html[lang='kn'] .eyebrow, html[lang='hi'] .eyebrow { text-transform: none; lette
 .list .m { color: var(--muted); font-size: 13px; }
 .list .p { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .list .p b { display: block; font-weight: 600; }
-.list .p span { color: var(--muted); font-size: 13px; }
+.list .p span { display: block; color: var(--muted); font-size: 13px; }
+.list li > div:first-child { min-width: 0; flex: 1; }
 .list li.yours { background: var(--surface); margin: 0 -10px; padding: 12px 10px; border-radius: 10px; border-top-color: transparent; }
 .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; vertical-align: 2px; }
 .count { font-size: 20px; font-weight: 700; margin: 0; }

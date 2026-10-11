@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 1,
+  "slug": "samesalt",
+  "createdAt": 1791694507655,
+  "updatedAt": 1791694507655,
+  "name": "SameSalt",
+  "description": "Help patients in India pay less for the same medicine. Given a photo of a medicine strip or a typed name (English, Kannada or Hindi): read the brand, salt(s) and strength; find every brand with exactly the same salt, strength and dosage form and rank them by price per tablet; show the matching Jan Aushadhi (PMBJP) generic and its official MRP; find the nearest Jan Aushadhi Kendra from a PIN code; answer in the user's language. Never give dosage advice, never suggest switching narrow-therapeutic-index drugs (warfarin, thyroxine, epilepsy, transplant drugs), and always tell the user to check with their doctor or pharmacist before switching. Log each lookup anonymously for an impact dashboard.",
+  "function": "other",
+  "preferredModel": "workers-ai/llama-4-scout (vision) + llama-3.3-70b (text)",
+  "builtBy": "guided",
+  "planId": "plan-0be8ea991d5495a7",
+  "plan": {
+    "summary": "Fixed, auditable tool plan. Models only read the photo / free text; every match, price and safety decision is a deterministic tool over published data. AF's first draft (browser scraping of retail sites) was replaced: scraping is fragile and SerpApi credits are gone, so production uses the 246k-brand database + official PMBJP lists.",
+    "steps": [
+      {
+        "title": "read_strip",
+        "tool": "workers-ai:@cf/meta/llama-4-scout-17b-16e-instruct",
+        "detail": "Vision model reads brand, salts, strengths, form, release from the photo (prompt: read_strip). Fallback: mistral-small-3.1, then on-device Tesseract OCR in the browser.",
+        "writesExternally": false
+      },
+      {
+        "title": "understand_text",
+        "tool": "workers-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+        "detail": "Only for typed text in Kannada/Hindi script or full questions (prompt: understand_text).",
+        "writesExternally": false
+      },
+      {
+        "title": "identify_medicine",
+        "tool": "d1:medicines",
+        "detail": "Brand-name match with strict number check, cross-checked against the composition read off the strip; falls back to the composition alone.",
+        "writesExternally": false
+      },
+      {
+        "title": "find_same_salt",
+        "tool": "d1:medicines",
+        "detail": "All brands with an identical canonical key (sorted salts:strength | form | release), cheapest per unit first.",
+        "writesExternally": false
+      },
+      {
+        "title": "jan_aushadhi_match",
+        "tool": "d1:ja_products",
+        "detail": "PMBJP generic with the identical key and its official MRP.",
+        "writesExternally": false
+      },
+      {
+        "title": "nearest_kendra",
+        "tool": "d1:kendras",
+        "detail": "Nearest Kendras by location or PIN (exact, then nearby PINs).",
+        "writesExternally": false
+      },
+      {
+        "title": "compose_answer",
+        "tool": "templates:public/strings.js",
+        "detail": "Answer in en/kn/hi from verified facts only; safety line always; NTI drugs never get a switch suggestion.",
+        "writesExternally": false
+      },
+      {
+        "title": "log_lookup",
+        "tool": "d1:lookups",
+        "detail": "Anonymous impact row (no image, name, phone, IP); test traffic flagged and excluded.",
+        "writesExternally": true
+      }
+    ],
+    "afDraftSteps": [
+      {
+        "title": "Confirm inputs, constraints and consent",
+        "detail": "Ask user to confirm they will upload a photo or type the medicine name, provide PIN code and preferred language, and to consent to anonymous logging for the impact dashboard.",
+        "tool": "reason",
+        "writesExternally": false,
+        "args": {}
+      },
+      {
+        "title": "Request required user data",
+        "detail": "Prompt user to upload a clear photo of the medicine strip OR type the brand name and salt(s) with strength and dosage form, plus the 6-digit PIN and preferred language (English/Kannada/Hindi).",
+        "tool": "reason",
+        "writesExternally": false,
+        "args": {}
+      },
+      {
+        "title": "Save raw user input to working folder",
+        "detail": "Write the uploaded image filename or the typed text, PIN and language to a timestamped file in the working folder for processing (local storage).",
+        "tool": "write-file",
+        "writesExternally": false,
+        "args": {
+          "path": "inputs/lookup_<timestamp>.json",
+          "content": "{ \"input_type\": \"<image|text>\", \"raw_text_or_image_filename\": \"<placeholder>\", \"pin\": \"<PIN>\", \"language\": \"<lang>\" }"
+        }
+      },
+      {
+        "title": "Extract text from photo (if image provided)",
+        "detail": "If the user provided a photo, run local OCR (e.g., Tesseract) on the saved image to extract printed text from the strip; do not upload the image externally unless user explicitly allows.",
+        "tool": "reason",
+        "writesExternally": false,
+        "args": {}
+      },
+      {
+        "title": "Parse and normalize medicine fields",
+        "detail": "From OCR/text input, identify brand name, active salt(s) (INN), strengths, dosage form (tablet/capsule/syrup), and pack size; transliterate/translate from Kannada/Hindi to English for matching, normalize units (mg, mcg).",
+        "tool": "reason",
+        "writesExternally": false,
+        "args": {}
+      },
+      {
+        "title": "Check narrow-therapeutic-index (NTI) exclusions",
+        "detail": "Compare the parsed salts against an NTI/exclusion list (e.g., warfarin, levothyroxine, antiepileptics, transplant/immunosuppressants) and flag if switching should NOT be suggested; include mandatory safety rule.",
+        "tool": "reason",
+        "writesExternally": false,
+        "args": {}
+      },
+      {
+        "title": "Search Indian drug registries and retail sites for exact matches",
+        "detail": "Query authoritative sources (CDSCO product lists, PMBJP/Jan Aushadhi site, major retailers and pharma price aggregators like 1mg, PharmEasy, Netmeds, MedIndia, PharmaTrac) for brands whose active salt(s), strength and dosage form exactly match the parsed values.",
+        "tool": "browser",
+        "writesExternally": false,
+        "args": {
+          "queries": [
+            "Exact match search: \"<salt name> <strength> <dosage form> site:1mg.com OR site:pharmeasy.in OR site:netmeds.com\"",
+            "CDSCO/registry product list lookup for \"<salt> <strength>\"",
+            "PMBJP (Jan Aushadhi) catalog lookup for \"<salt> <strength>\""
+          ],
+          "notes": "Prefer official/regulatory sources first, then large retailers for current retail MRPs."
+        }
+      },
+      {
+        "title": "Extract prices and compute price-per-tablet",
+        "detail": "For every matching brand found, collect packaging (tablets per pack) and retail price to calculate price per tablet; note currency (INR) and any pack-size differences.",
+        "tool": "browser",
+        "writesExternally": false,
+        "args": {
+          "instructions": "Scrape or read displayed MRP/retail price and pack size from each listing; record source URL and timestamp."
+        }
+      },
+      {
+        "title": "Rank brands by price per tablet and compute savings",
+        "detail": "Sort matching brands by computed price per tablet (ascending), compute absolute and percentage savings versus the user's current brand, and flag any price outliers or unverified entries.",
+        "tool": "reason",
+        "writesExternally": false,
+        "args": {}
+      },
+      {
+        "title": "Lookup PMBJP (Jan Aushadhi) generic and official MRP",
+        "detail": "Search the PMBJP/Jan Aushadhi database for the exact matching generic formulation, capture the official PMBJP MRP and availability notes.",
+        "tool": "browser",
+        "writesExternally": false,
+        "args": {
+          "queries": [
+            "PMBJP product search for \"<salt> <strength> <dosage form>\"",
+            "Retrieve official PMBJP MRP and pack sizes"
+          ]
+        }
+      },
+      {
+        "title": "Find nearest Jan Aushadhi Kendra for user's PIN",
+        "detail": "Using the user's 6-digit PIN, query the PMBJP/Jan Aushadhi locator or government listings to find the nearest Kendra(s), addresses, and contact details.",
+        "tool": "browser",
+        "writesExternally": false,
+        "args": {
+          "query": "Jan Aushadhi Kendra locator search by PIN <PIN>"
+        }
+      },
+      {
+        "title": "Draft user-facing reply in the user's language with safety disclaimers",
+        "detail": "Compose a message in the requested language showing: parsed brand/salt/strength/form, ranked brands with price-per-tablet and savings, the PMBJP generic and its official MRP, nearest Kendra details, and mandatory safety text: do not give dosage advice, do not suggest switching NTI drugs, and advise checking with doctor/pharmacist before switching.",
+        "tool": "reason",
+        "writesExternally": false,
+        "args": {
+          "output_template": "Include translation/localized terms and the exact disclaimer phrasing; ask if user wants purchase links or help contacting the Kendra."
+        }
+      },
+      {
+        "title": "Save a local copy of the results",
+        "detail": "Write the anonymized result summary and the raw matched-brand list to a timestamped file in the working folder for traceability.",
+        "tool": "write-file",
+        "writesExternally": false,
+        "args": {
+          "path": "results/lookup_result_<timestamp>.json",
+          "content": "{ \"parsed\": { /* brand/salt/strength/form */ }, \"matches\": [ /* brands, price_per_tablet, source_url */ ], \"pmbjp\": { /* generic, mrp */ }, \"nearest_kendra\": { /* address */ }, \"language\": \"<lang>\" }"
+        }
+      },
+      {
+        "title": "Log anonymized lookup to impact dashboard",
+        "detail": "Send a minimal anonymized record (salt(s), strength, dosage form, timestamp, hashed PIN or rounded PIN area, language) to the external impact dashboard endpoint for aggregate metrics tracking; do not include any PII or user identifiers.",
+        "tool": "browser",
+        "writesExternally": true,
+        "args": {
+          "endpoint": "https://<impact-dashboard-endpoint>/api/log-lookup",
+          "payload": {
+            "salt_normalized": "<salt>",
+            "strength": "<strength>",
+            "dosage_form": "<form>",
+            "timestamp_iso": "<timestamp>",
+            "pin_hash_prefix": "<hashed_or_truncated_pin>",
+            "language": "<lang>",
+            "source": "samesalt-agent"
+          },
+          "note": "Use POST with TLS; ensure payload contains no names, contact info, or raw PIN. Confirm user consent before sending."
+        }
+      },
+      {
+        "title": "Return the drafted results to the user",
+        "detail": "Present the localized message and ask whether the user wants purchase links, directions to the Kendra, or help contacting the Kendra/pharmacist; reiterate the safety disclaimers.",
+        "tool": "reason",
+        "writesExternally": false,
+        "args": {}
+      }
+    ]
+  },
+  "connectorIds": [],
+  "guardrails": {
+    "dataAccess": [
+      "public medicine dataset (Kaggle, CC BY-SA 4.0)",
+      "official PMBJP product and Kendra lists"
+    ],
+    "actions": [
+      "read-only lookups",
+      "append one anonymous row to the impact log"
+    ],
+    "requireApprovalForWrites": false,
+    "rules": [
+      "Same salt + same strength + same dosage form + same release type only.",
+      "Never give dosage advice or advise stopping a medicine.",
+      "Narrow-therapeutic-index salts (warfarin, thyroxine, antiepileptics, transplant drugs, lithium, digoxin...) never get a switch suggestion.",
+      "Every answer ends with: check with your doctor or pharmacist before switching.",
+      "Photos are processed in memory and never stored; no personal data in logs."
+    ],
+    "tone": "plain, short, respectful; patient's chosen language (English, Kannada, Hindi)"
+  },
+  "version": "0.1.0",
+  "authMode": "none",
+  "price": "free",
+  "kit": "cloudflare-worker",
+  "tools": [
+    "read_strip",
+    "understand_text",
+    "identify_medicine",
+    "find_same_salt",
+    "jan_aushadhi_match",
+    "nearest_kendra",
+    "compose_answer",
+    "log_lookup"
+  ],
+  "prompts": [
+    "read_strip",
+    "understand_text",
+    "samesalt-system"
+  ],
+  "evals": [
+    "understand-text"
+  ],
+  "runsAt": "https://samesalt-agent.samesalt-worker.workers.dev",
+  "sourceFiles": [
+    "worker/src/agent.js",
+    "worker/src/tools.js",
+    "worker/src/vision.js",
+    "worker/src/normalize.js",
+    "public/strings.js"
+  ]
+}

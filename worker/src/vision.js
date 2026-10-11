@@ -8,14 +8,14 @@ export const VISION_MODELS = [
 ];
 export const TEXT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 
-const SYSTEM = `You read photos of Indian medicine strips and boxes.
-Report ONLY text that is actually printed. Never guess a medicine from its colour or shape.
-Return a single JSON object, nothing else:
-{"brand": "brand name with its number exactly as printed, e.g. \\"Dolo 650\\" or \\"Pan 40\\" (empty if not visible)",
- "composition": "each active ingredient with its strength, joined by \\" + \\", e.g. \\"Paracetamol (650mg)\\" or \\"Amoxycillin (500mg) + Clavulanic Acid (125mg)\\" (empty if not visible)",
- "form": "tablet | capsule | syrup | injection | cream | other",
- "release": "SR | XR | CR | MR | DR | (empty)",
- "readable": true or false}`;
+// Prompts live in AgentFoundry's Agent Studio (.codenow/agent-studio/prompts/, versioned there and
+// evaluated across models in AF's Evals tab) and are bundled into the Worker as text modules.
+import READ_STRIP_MD from '../../.codenow/agent-studio/prompts/read_strip.md';
+import UNDERSTAND_TEXT_MD from '../../.codenow/agent-studio/prompts/understand_text.md';
+
+export const stripFrontmatter = (md) => String(md).replace(/^---[\s\S]*?---\s*/, '').trim();
+const SYSTEM = stripFrontmatter(READ_STRIP_MD);
+const UNDERSTAND = stripFrontmatter(UNDERSTAND_TEXT_MD);
 
 export function parseJsonLoose(x) {
   if (x && typeof x === 'object') return x;
@@ -83,10 +83,7 @@ export async function understandText(env, text) {
       messages: [
         {
           role: 'system',
-          content:
-            'Extract the medicine the user is asking about. The text may be in Kannada, Hindi or English, in any script. ' +
-            'Return JSON only: {"brand": "the brand name and number in English letters, e.g. Dolo 650", "composition": "salt and strength if the user gave it, else empty"}. ' +
-            'Do not add a medicine the user did not mention.',
+          content: UNDERSTAND,
         },
         { role: 'user', content: text.slice(0, 300) },
       ],

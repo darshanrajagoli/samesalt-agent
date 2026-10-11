@@ -23,3 +23,9 @@ binding = "AI"
 
 [observability]
 enabled = true
+
+# Prompts are authored in AgentFoundry (.codenow/agent-studio/prompts/*.md) and bundled as text.
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true

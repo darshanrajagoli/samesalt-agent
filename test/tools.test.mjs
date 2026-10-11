@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fixtureDb } from './d1shim.mjs';
-import { identifyMedicine, findSameSalt, janAushadhiMatch, nearestKendra, computeSaving, compositionFromText, brandCandidatesFromText, nameScore } from '../worker/src/tools.js';
+import { cleanComposition, identifyMedicine, findSameSalt, janAushadhiMatch, nearestKendra, computeSaving, compositionFromText, brandCandidatesFromText, nameScore } from '../worker/src/tools.js';
 import { runAgent } from '../worker/src/agent.js';
 import { composeAnswer } from '../public/strings.js';
 
@@ -40,6 +40,15 @@ test('identify: composition read off the strip confirms the brand guess', async 
   const r = await identifyMedicine(db, { brand: 'Dolo 650', composition: 'Paracetamol IP 650 mg', form: 'tablet' });
   assert.equal(r.via, 'brand+composition');
   assert.equal(r.composition_agrees, true);
+});
+
+test('identify: "salt form eq. to base" compositions (found via AgentFoundry Replay) agree with the brand', async () => {
+  assert.equal(cleanComposition('Rosuvastatin Calcium I.P. eq. to Rosuvastatin ..... 10 mg'), 'Rosuvastatin 10 mg');
+  const r = await identifyMedicine(db, { brand: 'ROSUVAS 10', composition: 'Rosuvastatin Calcium I.P. eq. to Rosuvastatin ..... 10 mg', form: 'tablet' });
+  assert.equal(r.composition_agrees, true);
+  const p = await identifyMedicine(db, { brand: 'PAN-40', composition: 'Pantoprazole Sodium I.P. eq. to Pantoprazole ..... 40 mg', form: 'tablet' });
+  assert.equal(p.medicine.name, 'PAN 40 Tablet');
+  assert.equal(p.composition_agrees, true);
 });
 
 test('identify: unknown brand still works from the printed composition', async () => {

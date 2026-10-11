@@ -1,0 +1,59 @@
+SMART-CODE · HAIKU
+kn.contains: "ಇದರಲ್ಲಿರುವುದು" -> "ಇದರಲ್ಲಿ ಇದೆ" (more natural, concise label for "Contains" in Kannada)
+
+kn.composeAnswer (cheapBrand + yourUnit branch): "ಅತಿ ಕಡಿಮೆ ಬೆಲೆಯದು ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}. ${f.brand}: ${per} ${rupees(f.yourUnit)}." -> "ಅತಿ ಕಡಿಮೆ ಬೆಲೆ ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}. ${f.brand}: ${per} ${rupees(f.yourUnit)}." (reason: "ಅತಿ ಕಡಿಮೆ ಬೆಲೆಯದು" is awkward; "ಅತಿ ಕಡಿಮೆ ಬೆಲೆ" is clearer and more natural Kannada wording)
+
+kn.composeAnswer (cheapBrand-only branch): "ಅತಿ ಕಡಿಮೆ ಬೆಲೆಯದು ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}." -> "ಅತಿ ಕಡಿಮೆ ಬೆಲೆ ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}." (same reason as above)
+
+hi.intro: "…सरकारी जन औषधि दाम और सबसे नज़दीकी जन औषधि केंद्र दिखाता है。" -> "…सरकारी जन औषधि की कीमत और सबसे नज़दीकी जन औषधि केंद्र दिखाता है。" (reason: add "की कीमत" for grammatical clarity in Hindi; meaning unchanged)
+
+hi.stepsTitle: "SameSalt ने यह कैसे पता किया" -> "SameSalt ने यह कैसे पता लगाया" (reason: "पता लगाया" is the more natural Hindi phrasing for "worked this out")
+
+hi.volunteerOn: "स्वयंसेवक मोड चालू है: खोजें स्वयंसेवक की मदद के रूप में गिनी जाती हैं。" -> "स्वयंसेवक मोड चालू है: खोजों को स्वयंसेवक की मदद माना जाएगा।" (reason: original sentence is grammatically awkward; revised version is clearer and natural Hindi)
+
+hi.dataNote: "ब्रांड के दाम 2022 के डेटासेट के छपे हुए MRP हैं और बदल चुके हो सकते हैं。" -> "ब्रांड के दाम 2022 के डेटासेट में छपे हुए MRP हैं और बदल चुके हो सकते हैं。" (reason: add "में" for correct Hindi phrasing: "printed in the 2022 dataset")
+
+hi.pharmacistCard: "कृपया बिल्कुल इसी कंपोज़िशन वाली सबसे कम दाम की दवा दें:" -> "कृपया बिल्कुल इसी संयोजन वाली सबसे सस्ती दवा दें:" (reason: "संयोजन" is a more natural Hindi term than transliterated "कंपोज़िशन", and "सबसे सस्ती" reads more naturally than "सबसे कम दाम की"; meaning is preserved)
+
+If you want, I can produce a full per-key pass (including leaving explicit "no change" entries) — tell me if you'd prefer a complete list of every kn/hi key with either "no change" or a correction.
+=====
+YOU
+Now a careful second pass on Kannada only. Read public/strings.js (kn block and the kn branch of composeAnswer) and public/volunteer.html (the Kannada steps). For each Kannada string, check spelling (ottakshara, zero-width joiners before suffixes like ‌ಗೆ/‌ಗಳು), grammar and whether a farmer or ASHA worker in Dharwad/Belagavi would understand it. List only strings that need a change as `key: old -> new (reason)`. Do not edit files.
+=====
+SMART-CODE · GPT
+✓ read_file: public/volunteer.html
+=====
+SMART-CODE · GPT
+kn.contains: "ಇದರಲ್ಲಿರುವುದು" -> "ಇದರಲ್ಲಿ ಇದೆ" (reason: "ಇದರಲ್ಲಿ ಇದೆ" is more natural, conversational Kannada for the label "Contains".)
+
+kn.perUnit.tablet: "ಪ್ರತಿ ಮಾತ್ರೆಗೆ" -> "ಪ್ರತಿ ಮಾತ್ರೆ" (reason: remove the extra case suffix "ಗೆ" so the label reads like the English "per tablet"; simpler and more natural.)
+
+kn.perUnit.capsule: "ಪ್ರತಿ ಕ್ಯಾಪ್ಸೂಲ್‌ಗೆ" -> "ಪ್ರತಿ ಕ್ಯಾಪ್ಸೂಲ್" (reason: same as above — use the noun phrase "per capsule" without the extra suffix.)
+
+kn.perUnit.ml: "ಪ್ರತಿ ಮಿ.ಲೀ.ಗೆ" -> "ಪ್ರತಿ ಮಿ.ಲೀ." (reason: keep it as a short noun phrase "per ml"; drop the case suffix.)
+
+kn.perUnit.unit: "ಪ್ರತಿ ಘಟಕಕ್ಕೆ" -> "ಪ್ರತಿ ಘಟಕ" (reason: same style: "per unit" as a short label.)
+
+kn.jaNone: "ಇದೇ ಸಾಲ್ಟ್ ಮತ್ತು ಪ್ರಮಾಣದ ಔಷಧಿ ಜನ ಔಷಧಿ ಪಟ್ಟಿಯಲ್ಲಿ ಇಲ್ಲ." -> "ಇದೇ ಸಾಲ್ಟ್ ಮತ್ತು ಅದೇ ಪ್ರಮಾಣದ ಔಷಧಿ ಜನ ಔಷಧಿ ಪಟ್ಟಿಯಲ್ಲಿ ಇಲ್ಲ." (reason: missing "ಅದೇ" makes the sentence slightly unclear — adding "ಅದೇ ಪ್ರಮಾಣದ" matches the English "this exact salt and strength".)
+
+kn.switchYes: "ಹೌದು, ಬದಲಾಯಿಸಿದೆ" -> "ಹೌದು, ಬದಲಾಯಿಸಿದ್ದೇನೆ" (reason: clearer first-person phrasing for the response "Yes, I switched" — more natural for a patient/volunteer to read.)
+
+kn.volunteerOn: "ಸ್ವಯಂಸೇವಕ ಮೋಡ್ ಆನ್ ಆಗಿದೆ: ಹುಡುಕಾಟಗಳನ್ನು ಸ್ವಯಂಸೇವಕರ ಸಹಾಯ ಎಂದು ಎಣಿಸಲಾಗುತ್ತದೆ." -> "ಸ್ವಯಂಸೇವಕ ಮೋಡ್ ಆನ್ ಆಗಿದೆ: ಹುಡುಕಾಟಗಳನ್ನು ಸ್ವಯಂಸೇವಕರ ಸಹಾಯವಾಗಿ ಎಣಿಸಲಾಗುತ್ತದೆ." (reason: original phrasing is grammatically awkward; "ಸಹಾಯವಾಗಿ" gives the intended meaning "counted as helped by a volunteer".)
+
+composeAnswer (kn) — cheapBrand + yourUnit branch: 
+"ಅತಿ ಕಡಿಮೆ ಬೆಲೆಯದು ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}. ${f.brand}: ${per} ${rupees(f.yourUnit)}." 
+-> 
+"ಅತಿ ಕಡಿಮೆ ಬೆಲೆ ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}. ${f.brand}: ${per} ${rupees(f.yourUnit)}." 
+(reason: "ಅತಿ ಕಡಿಮೆ ಬೆಲೆಯದು" is awkward; "ಅತಿ ಕಡಿಮೆ ಬೆಲೆ" is concise and natural Kannada.)
+
+composeAnswer (kn) — cheapBrand-only branch:
+"ಅತಿ ಕಡಿಮೆ ಬೆಲೆಯದು ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}." 
+-> 
+"ಅತಿ ಕಡಿಮೆ ಬೆಲೆ ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}." 
+(reason: same as above.)
+
+volunteer.html (kn card) — li1: "ಅವರಿಗೆ ಯಾವ ಭಾಷೆ ಬೇಕು ಎಂದು ಕೇಳಿ, ಮೇಲ್ಭಾಗದಲ್ಲಿ ಅದನ್ನು ಒತ್ತಿ (ಕನ್ನಡ / हिन्दी / English)." -> "ಅವರಿಗೆ ಯಾವ ಭಾಷೆ ಬೇಕೆಂದು ಕೇಳಿ, ಮೇಲ್ಭಾಗದಲ್ಲಿ ಅದನ್ನು ಒತ್ತಿ (ಕನ್ನಡ / हिन्दी / English)." (reason: "ಬೇಕು ಎಂದು" -> "ಬೇಕೆಂದು" is the more natural spoken/written connective in Kannada.)
+
+volunteer.html (kn card) — li6: "ಕೆಂಪು ಎಚ್ಚರಿಕೆ ಕಂಡರೆ (ರಕ್ತ ತೆಳುವಾಗಿಸುವ, ಥೈರಾಯ್ಡ್, ಮೂರ್ಛೆ ರೋಗ, ಅಂಗಾಂಗ ಕಸಿ ಔಷಧಿಗಳು), ಬದಲಾವಣೆಯನ್ನು ಸೂಚಿಸಬೇಡಿ." -> "ಕೆಂಪು ಎಚ್ಚರಿಕೆ ಕಂಡರೆ (ರಕ್ತದ ಸೋರಣೆ ಹೆಚ್ಚಿಸುವ ಔಷಧಿಗಳು, ಥೈರಾಯ್ಡ್ ಔಷಧಿಗಳು, ಎಪಿಲೆಪ್ಸಿ/ಜರು ಸಂಬಂಧಿ ಔಷಧಿಗಳು, ಅಂಗಾಂತರ ಸಂಬಂಧಿ ಔಷಧಿಗಳು), ಬದಲಾವಣೆಯನ್ನು ಸೂಚಿಸಬೇಡಿ." (reason: original category names are uneven/ambiguous; the revised list uses more standard, understandable Kannada phrasing for blood-thinners, thyroid, epilepsy-related and transplant-related medicines so ASHA/farmers in Dharwad/Belagavi will understand.)
+
+If you want, I can produce a patch preview showing exactly where these replacements would be applied (no files will be edited unless you ask).

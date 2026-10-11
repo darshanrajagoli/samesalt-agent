@@ -101,6 +101,8 @@ async function handleImpact(env) {
   const [totals] = await q(`SELECT
       COUNT(*) AS lookups,
       SUM(status = 'ok') AS matched,
+      SUM(status = 'not_found') AS not_found,
+      SUM(status = 'ok' AND saving_pack > 0) AS with_cheaper_option,
       COUNT(DISTINCT device) AS devices,
       ROUND(SUM(CASE WHEN status = 'ok' AND saving_pack > 0 THEN saving_pack ELSE 0 END), 2) AS potential_saving,
       SUM(switched = 'yes') AS switched_yes,
