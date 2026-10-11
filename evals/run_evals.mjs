@@ -75,7 +75,7 @@ for (const c of suite.cases) {
 
 const n = results.length;
 const passed = results.filter((r) => r.pass).length;
-const imgs = results.filter((r) => r.id.startsWith('img-'));
+const imgs = results.filter((r) => r.id.startsWith('img-') || r.id.startsWith('hard-'));
 const txts = results.filter((r) => r.id.startsWith('txt-'));
 const keyAcc = results.filter((r) => r.checks.ckey).length;
 const summary = {

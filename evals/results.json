@@ -1,27 +1,27 @@
 {
   "summary": {
-    "when": "2026-10-11T05:16:34.735Z",
+    "when": "2026-10-11T05:34:14.629Z",
     "target": "https://samesalt-agent.samesalt-worker.workers.dev",
     "cases": 23,
     "passed": 23,
     "accuracy": 1,
     "composition_key_accuracy": 1,
     "photos": {
-      "cases": 15,
-      "passed": 15
+      "cases": 18,
+      "passed": 18
     },
     "typed": {
       "cases": 5,
       "passed": 5
     },
-    "photo_composition_agrees_with_brand": "15/15",
-    "median_ms": 1715
+    "photo_composition_agrees_with_brand": "17/17",
+    "median_ms": 1944
   },
   "results": [
     {
       "id": "img-dolo650",
       "pass": true,
-      "ms": 1863,
+      "ms": 4006,
       "retried": false,
       "error": null,
       "checks": {
@@ -50,7 +50,7 @@
     {
       "id": "img-pan40",
       "pass": true,
-      "ms": 2259,
+      "ms": 3137,
       "retried": false,
       "error": null,
       "checks": {
@@ -79,7 +79,7 @@
     {
       "id": "img-augmentin625",
       "pass": true,
-      "ms": 1868,
+      "ms": 2402,
       "retried": false,
       "error": null,
       "checks": {
@@ -108,7 +108,7 @@
     {
       "id": "img-telma40",
       "pass": true,
-      "ms": 1640,
+      "ms": 2486,
       "retried": false,
       "error": null,
       "checks": {
@@ -137,7 +137,7 @@
     {
       "id": "img-glycomet-sr",
       "pass": true,
-      "ms": 2745,
+      "ms": 1977,
       "retried": false,
       "error": null,
       "checks": {
@@ -166,7 +166,7 @@
     {
       "id": "img-azithral500",
       "pass": true,
-      "ms": 2606,
+      "ms": 2067,
       "retried": false,
       "error": null,
       "checks": {
@@ -195,7 +195,7 @@
     {
       "id": "img-ecosprin75",
       "pass": true,
-      "ms": 1437,
+      "ms": 1986,
       "retried": false,
       "error": null,
       "checks": {
@@ -224,7 +224,7 @@
     {
       "id": "img-amlokind5",
       "pass": true,
-      "ms": 2131,
+      "ms": 1944,
       "retried": false,
       "error": null,
       "checks": {
@@ -253,7 +253,7 @@
     {
       "id": "img-montair10",
       "pass": true,
-      "ms": 1959,
+      "ms": 2278,
       "retried": false,
       "error": null,
       "checks": {
@@ -282,7 +282,7 @@
     {
       "id": "img-thyronorm50",
       "pass": true,
-      "ms": 1675,
+      "ms": 1758,
       "retried": false,
       "error": null,
       "checks": {
@@ -311,7 +311,7 @@
     {
       "id": "img-crocin-pr",
       "pass": true,
-      "ms": 1715,
+      "ms": 2342,
       "retried": false,
       "error": null,
       "checks": {
@@ -340,7 +340,7 @@
     {
       "id": "img-atorva20",
       "pass": true,
-      "ms": 1343,
+      "ms": 1784,
       "retried": false,
       "error": null,
       "checks": {
@@ -369,7 +369,7 @@
     {
       "id": "img-ecosprin-av",
       "pass": true,
-      "ms": 1763,
+      "ms": 1882,
       "retried": false,
       "error": null,
       "checks": {
@@ -398,7 +398,7 @@
     {
       "id": "img-allegra120",
       "pass": true,
-      "ms": 1712,
+      "ms": 2929,
       "retried": false,
       "error": null,
       "checks": {
@@ -427,7 +427,7 @@
     {
       "id": "img-rosuvas10",
       "pass": true,
-      "ms": 2376,
+      "ms": 2096,
       "retried": false,
       "error": null,
       "checks": {
@@ -456,7 +456,7 @@
     {
       "id": "hard-heavy-blur",
       "pass": true,
-      "ms": 1598,
+      "ms": 1685,
       "retried": false,
       "error": null,
       "checks": {
@@ -485,7 +485,7 @@
     {
       "id": "hard-cropped",
       "pass": true,
-      "ms": 1985,
+      "ms": 1676,
       "retried": false,
       "error": null,
       "checks": {
@@ -514,7 +514,7 @@
     {
       "id": "hard-unknown-brand",
       "pass": true,
-      "ms": 1826,
+      "ms": 1580,
       "retried": false,
       "error": null,
       "checks": {
@@ -543,7 +543,7 @@
     {
       "id": "txt-dolo-glued",
       "pass": true,
-      "ms": 280,
+      "ms": 316,
       "retried": false,
       "error": null,
       "checks": {
@@ -565,7 +565,7 @@
     {
       "id": "txt-kannada",
       "pass": true,
-      "ms": 914,
+      "ms": 1189,
       "retried": false,
       "error": null,
       "checks": {
@@ -587,7 +587,7 @@
     {
       "id": "txt-hindi",
       "pass": true,
-      "ms": 879,
+      "ms": 915,
       "retried": false,
       "error": null,
       "checks": {
@@ -609,7 +609,7 @@
     {
       "id": "txt-augmentin",
       "pass": true,
-      "ms": 292,
+      "ms": 410,
       "retried": false,
       "error": null,
       "checks": {
@@ -631,7 +631,7 @@
     {
       "id": "txt-telma-pin",
       "pass": true,
-      "ms": 290,
+      "ms": 305,
       "retried": false,
       "error": null,
       "checks": {
