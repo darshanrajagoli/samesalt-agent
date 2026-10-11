@@ -101,7 +101,7 @@ The project was opened and developed in the **AgentFoundry desktop IDE (v0.1.80,
 - **Agent Studio:** the agent was created with *Describe → Build*; AF's drafted plan (scrape retail sites) was replaced with the production tool plan, guardrails, tools and model choices in `.codenow/agent-studio/agents/samesalt.json`.
 - **Prompts live in AF:** `read_strip` and `understand_text` are authored and versioned in AF's Prompts store, and the production Worker **bundles those exact files** (`.codenow/agent-studio/prompts/*.md`).
 - **Evals in AF:** the `understand-text` suite (12 cases) runs in AF's Evals tab — 12/12 on SMART-Code.
-- **Runs / Replay:** every production eval run is written as AF run JSONL (`.codenow/runs/samesalt-agent/`) and replayed step by step in AF's Runs tab. Replaying a photo run showed the composition read from a "Rosuvastatin Calcium I.P. eq. to Rosuvastatin 10 mg" strip **disagreeing** with the brand; that bug was fixed (`cleanComposition`, with a regression test) and agreement went to 15/15.
+- **Runs / Replay:** every production eval run is written as AF run JSONL (`.codenow/runs/samesalt-agent/`) and replayed step by step in AF's Runs tab. Replaying a photo run showed the composition read from a "Rosuvastatin Calcium I.P. eq. to Rosuvastatin 10 mg" strip **disagreeing** with the brand; that bug was fixed (`cleanComposition`, with a regression test) and agreement went to 17/17 photos.
 
 ## Run it yourself
 
