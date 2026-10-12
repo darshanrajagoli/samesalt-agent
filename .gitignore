@@ -4,7 +4,6 @@ worker/.wrangler/
 .dev.vars
 .env*
 data/build/
-data/raw/
 __pycache__/
 *.pyc
 .codenow.local.json

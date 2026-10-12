@@ -21,6 +21,11 @@ CASES = [
     ("Atorvastatin Tablets IP 10 mg", "atorvastatin:10mg|tablet"),
     ("Amlodipine Tablets IP 5 mg", "amlodipine:5mg|tablet"),
     ("Paracetamol Tablets IP 0.65 g", "paracetamol:650mg|tablet"),
+    ("Aceclofenac 100mg and Paracetamol 325mg Tablets", "aceclofenac:100mg+paracetamol:325mg|tablet"),
+    ("Amoxycillin 500mg and Potassium Clavulanate 125mg Tablets IP", "amoxicillin:500mg+clavulanic acid:125mg|tablet"),
+    ("Ibuprofen 400mg and Paracetamol 325mg Tablets IP", "ibuprofen:400mg+paracetamol:325mg|tablet"),
+    ("Mupirocin Ointment IP 2 % w/w", "mupirocin:2% w/w|topical"),
+    ("Clotrimazole 1% w/v and Lignocaine Hydrochloride 2% w/v Ear Drops", "clotrimazole:1% w/v+lidocaine:2% w/v|drops"),
 ]
 
 

@@ -37,10 +37,18 @@ from build_d1 import clean_key, q  # noqa: E402
 FORM_WORDS = [
     (r"dispersible tablets?|chewable tablets?|tablets?|tab\b", "tablet"),
     (r"capsules?|cap\b", "capsule"),
-    (r"oral suspension|suspension|syrup|oral solution|solution|elixir|drops", "liquid"),
+    (r"eye/ear drops|eye drops|ear drops|nasal drops|drops", "drops"),
+    (r"oral suspension|suspension|syrup|oral solution|solution|elixir", "liquid"),
     (r"injection|infusion", "injection"),
     (r"cream|ointment|gel|lotion", "topical"),
+    (r"respules?", "respule"),
+    (r"inhalation|inhaler", "inhaler"),
+    (r"mouthwash|mouth wash", "mouthwash"),
+    (r"nasal spray|spray", "spray"),
+    (r"suppositor(?:y|ies)", "suppository"),
 ]
+# The brand database writes the same strength in more than one way; try each spelling, never a different strength.
+ALT_FORMS = {"drops": ["liquid"], "liquid": ["drops"]}
 RELEASE_WORDS = [
     (r"sustained[- ]release|\bsr\b|prolonged[- ]release|\bpr\b", "SR"),
     (r"extended[- ]release|\ber\b|\bxr\b", "XR"),
@@ -65,16 +73,20 @@ SYNONYMS = {
     "glyceryl trinitrate": "nitroglycerin",
     "salbutamol": "albuterol",
     "frusemide": "furosemide",
+    "lignocaine": "lidocaine",
+    "lignocaine hydrochloride": "lidocaine",
 }
+STRENGTH_RE = r"(\d+(?:\.\d+)?)\s*(mg|mcg|µg|ug|gm|g|iu|%\s*w/[wv]|%|ml)(?![a-z])"
+MULTI_STRENGTH_RE = r"(\d+(?:\.\d+)?(?:\s*/\s*\d+(?:\.\d+)?)+)\s*(mg|mcg|µg|ug|gm|g|iu)(?![a-z])"
 UNIT_TO_MG = {"g": 1000.0, "gm": 1000.0, "mg": 1.0, "mcg": 0.001, "µg": 0.001, "ug": 0.001}
 
 
 def std_strength(num: str, unit: str) -> str:
-    unit = unit.lower()
+    unit = re.sub(r"\s+", "", unit.lower())
     if unit in ("iu",):
         return f"{num}IU"
-    if unit in ("%", "w/v", "w/w"):
-        return f"{num}%"
+    if unit.startswith("%"):
+        return f"{num}% {unit[1:]}" if unit[1:] else f"{num}%"
     if unit == "ml":
         return f"{num}ml"
     v = round(float(num) * UNIT_TO_MG.get(unit, 1.0), 6)
@@ -134,19 +146,53 @@ def parse_generic(name: str, vocab: Vocab) -> tuple[str | None, str]:
     salt_text = re.sub(r"\((?:sr|er|xr|cr|mr|pr)\)", " ", salt_text, flags=re.I)
     salt_text = re.sub(r"\b(sustained|prolonged|extended|controlled|modified)[- ]release\b", " ", salt_text, flags=re.I)
     salt_text = re.sub(r"\b(gastro[- ]resistant|enteric[- ]coated|film[- ]coated|uncoated|orally disintegrating|dispersible|chewable)\b", " ", salt_text, flags=re.I)
-    salts = [x.strip() for x in re.split(r"\s*(?:,|&|\+|\band\b|\bwith\b)\s*", salt_text, flags=re.I) if x.strip()]
-    strengths = re.findall(r"(\d+(?:\.\d+)?)\s*(mg|mcg|µg|ug|gm|g|iu|%|ml)\b", s[form_at:], flags=re.I)
+    chunks = [x.strip() for x in re.split(r"\s*(?:,|&|\+|\band\b|\bwith\b)\s*", salt_text, flags=re.I) if x.strip()]
+    inline = [re.search(STRENGTH_RE, c, flags=re.I) for c in chunks]
+    if chunks and all(inline):
+        # "Ibuprofen 400mg and Paracetamol 325mg Tablets": each salt carries its own strength.
+        salts = [re.sub(r"\b(ip|bp|usp)\b", " ", c[: m.start()], flags=re.I).strip(" ()") for c, m in zip(chunks, inline)]
+        strengths = [m.groups() for m in inline]
+        if not all(salts):
+            return None, "strength without a salt name"
+    elif any(inline):
+        return None, "strengths on some salts only"
+    else:
+        salts = chunks
+        strengths = re.findall(STRENGTH_RE, s[form_at:], flags=re.I)
+        multi = re.search(MULTI_STRENGTH_RE, s[form_at:], flags=re.I)
+        if len(strengths) < len(salts) and multi:
+            # "Losartan + Chlorthalidone Tablet (25/6.25 Mg)": one unit for all strengths.
+            strengths = [(v.strip(), multi.group(2)) for v in multi.group(1).split("/")]
     if not salts or not strengths:
         return None, "no salts or strengths"
     # "500 mg + 125 mg" / "1mg/500mg": the k-th strength belongs to the k-th salt.
     if len(strengths) < len(salts):
         return None, f"{len(salts)} salts but {len(strengths)} strengths"
+    if len(strengths) > len(salts) and len(salts) > 1:
+        return None, f"{len(salts)} salts but {len(strengths)} strengths"
     strengths = strengths[: len(salts)]
-    pairs = sorted((vocab.map(n), std_strength(v, u)) for n, (v, u) in zip(salts, strengths))
-    key = "+".join(f"{n}:{st}" for n, st in pairs) + f"|{form}" + (f"|{release}" if release else "")
-    if vocab.keys and key not in vocab.keys:
-        return key, "no branded equivalent in database"
-    return key, "ok"
+    names = [vocab.map(n) for n in salts]
+    per5 = form == "liquid" and re.search(r"\bper\s*5\s*ml\b|/\s*5\s*ml\b", low)
+    keys = []
+    for f in [form, *ALT_FORMS.get(form, [])]:
+        for bare_pct in (False, True):
+            for per in ((True, False) if per5 else (False,)):
+                sts = []
+                for v, u in strengths:
+                    st = std_strength(v, u)
+                    if bare_pct:
+                        st = st.split(" ")[0]
+                    if per and st.endswith("mg"):
+                        st += "/5ml"
+                    sts.append(st)
+                pairs = sorted(zip(names, sts))
+                k = "+".join(f"{n}:{st}" for n, st in pairs) + f"|{f}" + (f"|{release}" if release else "")
+                if k not in keys:
+                    keys.append(k)
+    for k in keys:
+        if not vocab.keys or k in vocab.keys:
+            return k, "ok"
+    return keys[0], "no branded equivalent in database"
 
 
 def units_in(unit_size: str, form: str) -> float | None:
@@ -243,7 +289,9 @@ def build_products(path: Path, vocab: Vocab, out: Path) -> dict:
 
 
 def build_kendras(path: Path, out: Path) -> dict:
-    rows = read_table(path)
+    # The site downloads one PDF per state, so a folder of them is accepted too.
+    files = sorted(p for p in path.iterdir() if p.suffix.lower() in (".pdf", ".csv", ".json", ".xlsx")) if path.is_dir() else [path]
+    rows = [r for f in files for r in read_table(f)]
     sql = []
     for r in rows:
         code = pick(r, "kendraCode", "storeCode", "Kendra Code", "code", "applicationId", "id")
