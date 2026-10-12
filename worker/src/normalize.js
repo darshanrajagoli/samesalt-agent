@@ -178,6 +178,9 @@ export function describeKey(key) {
   const salts = saltPart.split('+').map((s) => {
     const [n, st] = s.split(':');
     const name = n.replace(/\b\w/g, (c) => c.toUpperCase());
+    // Display only (the key stays in mg): 0.05mg reads better as 50 mcg.
+    const mcg = st && /^0\.\d+mg$/.test(st) ? Math.round(parseFloat(st) * 1e6) / 1e3 : null;
+    if (mcg != null && mcg <= 200 && Number.isInteger(mcg)) return `${name} ${mcg} mcg`;
     return st ? `${name} ${st.replace(/(\d)(mg|ml|IU|mEq|units|%)$/, '$1 $2')}` : name;
   });
   return [salts.join(' + '), form, rel].filter(Boolean).join(' · ');

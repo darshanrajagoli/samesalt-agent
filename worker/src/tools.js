@@ -38,10 +38,16 @@ export function nameScore(query, name) {
 // brand database usually drops. Tried only when the literal key is unknown to the database.
 const SALT_FORMS = /\s+(?:calcium|sodium|potassium|magnesium|hydrochloride|hcl|besilate|besylate|maleate|succinate|tartrate|mesylate|mesilate|fumarate|citrate|sulphate|sulfate|phosphate|hyclate|dihydrate|monohydrate|trihydrate|anhydrous|bromide|acetate)\b/gi;
 
+// Salts listed without "+" ("Amoxicillin 500mg Clavulanic Acid 125mg", as people and models
+// often write them) get the separator back.
+const MISSING_PLUS = /(\d(?:\.\d+)?\s*(?:mg|mcg|g|gm|iu|%))\s*(?:,|&|\band\b|\bwith\b)?\s+(?=(?!(?:tablets?|tabs?|capsules?|caps?|syrup|suspension|injection|drops?|cream|gel|ointment|inhaler|sachets?|solution|film|coated|uncoated|sr|er|xr|cr|ip|bp|usp)\b)[A-Za-z]{3,})/gi;
+
 /** Printed composition -> text the salt parser understands. Found via an AgentFoundry Replay of a
  *  vision run: "Rosuvastatin Calcium I.P. eq. to Rosuvastatin ..... 10 mg" produced a key no brand had. */
+
 export function cleanComposition(text) {
   return String(text || '')
+    .replace(MISSING_PLUS, '$1 + ')
     .split(/\s*\+\s*/)
     .map((part) => {
       let p = part.replace(/\b(?:I\.P\.|B\.P\.|U\.S\.P\.|Ph\.\s*Eur\.)/gi, ' ');
@@ -57,11 +63,12 @@ export function cleanComposition(text) {
 /** The canonical key for a printed composition, preferring a variant that brands actually use. */
 export async function resolveCompositionKey(db, composition, hints) {
   const cleaned = cleanComposition(composition);
-  const variants = [...new Set([
-    keyFor(cleaned, hints).key,
-    keyFor(cleaned.replace(SALT_FORMS, ''), hints).key,
-    keyFor(composition, hints).key,
-  ].filter(Boolean))];
+  const base = [keyFor(cleaned, hints), keyFor(cleaned.replace(SALT_FORMS, ''), hints), keyFor(composition, hints)];
+  const keys = base.map((k) => k.key);
+  // Typed generic names often carry no dosage form ("amoxicillin + clavulanic acid 500/125"):
+  // try the common solid forms, but only accept a key that brands actually use.
+  if (!base[0].form) for (const f of ['tablet', 'capsule']) keys.push(keyFor(cleaned, { ...hints, form: f }).key, keyFor(cleaned.replace(SALT_FORMS, ''), { ...hints, form: f }).key);
+  const variants = [...new Set(keys.filter(Boolean))];
   for (const k of variants) {
     const hit = await db.prepare('SELECT 1 AS ok FROM medicines WHERE ckey = ?1 LIMIT 1').bind(k).first();
     if (hit) return k;
@@ -115,10 +122,14 @@ export async function identifyMedicine(db, { brand = '', composition = '', form 
   if (compKey) {
     // Brand unknown to the database, but the strip's composition is enough to compare.
     const salts = parseSaltComposition(composition);
+    // A typed generic name ("amoxicillin clavulanic acid 500 125") is not a brand: name it by its composition.
+    const first = tokens(brand)[0];
+    const generic = !first || compKey.split('|')[0].includes(first);
+    const label = describeKey(compKey).split(' · ')[0];
     return {
       found: true,
       via: 'composition',
-      medicine: { id: null, name: brand || describeKey(compKey), manufacturer: null, salt: composition, ckey: compKey, price: null, pack: null, unit_price: null, form: extractDosageForm(form) || extractDosageForm(brand), rel: extractReleaseType(brand), nti: isNti(salts) ? 1 : 0, incomplete: 0 },
+      medicine: { id: null, name: generic ? label : brand, manufacturer: null, salt: composition, ckey: compKey, price: null, pack: null, unit_price: null, form: extractDosageForm(form) || extractDosageForm(brand), rel: extractReleaseType(brand), nti: isNti(salts) ? 1 : 0, incomplete: 0 },
       label: describeKey(compKey),
       alternatives: [],
       composition_key_from_strip: compKey,

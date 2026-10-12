@@ -8,7 +8,7 @@
 // and the eval runner writes the same trace as AgentFoundry run JSONL (.codenow/runs/).
 import { readStrip, understandText } from './vision.js';
 import { identifyMedicine, findSameSalt, janAushadhiMatch, nearestKendra, computeSaving, compositionFromText, brandCandidatesFromText } from './tools.js';
-import { describeKey } from './normalize.js';
+import { describeKey, extractDosageForm } from './normalize.js';
 import { composeAnswer } from '../../public/strings.js';
 
 const NON_LATIN = /[^\u0000-ɏ\s\d.,()+\-/]/;
@@ -75,7 +75,8 @@ export async function runAgent(env, input) {
   if (!id.found && text && (NON_LATIN.test(text) || text.split(/\s+/).length > 3) && env.AI) {
     const u = await step('understand_text', { text }, () => understandText(env, text), (r) => (r.ok ? { brand: r.brand, composition: r.composition } : { failed: r.error }));
     if (u.ok) {
-      query = { brand: u.brand, composition: u.composition, form: '' };
+      // Keep the dosage form the person typed ("... 500/125 tablet"); the model may drop it.
+      query = { brand: u.brand, composition: u.composition, form: extractDosageForm(text) || '' };
       id = await step('identify_medicine', query, () => identifyMedicine(db, query), (r) =>
         r.found ? { name: r.medicine.name, composition: r.label, via: r.via } : { found: false }
       );
@@ -90,23 +91,29 @@ export async function runAgent(env, input) {
     count: r.count,
     cheapest: r.items[0] ? `${r.items[0].name} @ ₹${r.items[0].unit_price}/unit` : null,
   }));
-  const ja = meta.ja_loaded_at
+  // Narrow-therapeutic-index medicines: no cheaper option of any kind is suggested, so the
+  // Jan Aushadhi generic is not looked up either (the Kendra list is still shown).
+  const ntiMed = !!med.nti;
+  const ja = ntiMed
+    ? { available: false, nti: true }
+    : meta.ja_loaded_at
     ? await step('jan_aushadhi_match', { ckey: med.ckey }, () => janAushadhiMatch(db, med.ckey), (r) =>
         r.available ? { drug_code: r.product.drug_code, name: r.product.generic_name, mrp: r.product.mrp, unit_size: r.product.unit_size } : { available: false }
       )
     : { available: false, pending: true };
-  if (!meta.ja_loaded_at) trace.push({ tool: 'jan_aushadhi_match', input: { ckey: med.ckey }, output: { skipped: 'PMBJP product list not loaded' }, ms: 0 });
+  if (ntiMed) trace.push({ tool: 'jan_aushadhi_match', input: { ckey: med.ckey }, output: { skipped: 'narrow-therapeutic-index medicine: no switch suggested' }, ms: 0 });
+  else if (!meta.ja_loaded_at) trace.push({ tool: 'jan_aushadhi_match', input: { ckey: med.ckey }, output: { skipped: 'PMBJP product list not loaded' }, ms: 0 });
 
   const wantsKendra = pin.length === 6 || (input.lat != null && input.lng != null);
   let kendras = { by: null, items: [], pending: !meta.kendras_loaded_at };
   if (wantsKendra && meta.kendras_loaded_at) {
     kendras = await step('nearest_kendra', { pin: pin || undefined, location: input.lat != null ? 'approximate (not stored)' : undefined }, () =>
-      nearestKendra(db, { pin, lat: input.lat, lng: input.lng }), (r) => ({ by: r.by, found: r.items.length, nearest: r.items[0]?.name }));
+      nearestKendra(db, { pin, lat: input.lat, lng: input.lng }), (r) => ({ by: r.by, found: r.items.length, nearest: r.items[0]?.code }));
   } else if (wantsKendra) {
     trace.push({ tool: 'nearest_kendra', input: { pin }, output: { skipped: 'Kendra list not loaded' }, ms: 0 });
   }
 
-  const nti = !!med.nti;
+  const nti = ntiMed;
   const saving = nti ? { pack: med.pack, scanned_unit: med.unit_price, best_unit: null, saving_pack: null, pct: null } : computeSaving(med, same, ja);
   const cheapest = same.items[0];
   const facts = {

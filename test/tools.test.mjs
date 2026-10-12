@@ -152,3 +152,28 @@ test('agent: narrow-therapeutic-index medicine shows no cheaper list', async () 
   assert.equal(r.same_salt.items.length, 0);
   assert.match(r.answer, /Do not switch/);
 });
+
+test('identify: typed generic combination without "+" or dosage form still gets the exact key', async () => {
+  assert.equal(cleanComposition('Amoxicillin 500mg Clavulanic Acid 125mg'), 'Amoxicillin 500mg + Clavulanic Acid 125mg');
+  assert.equal(cleanComposition('Paracetamol 650 mg Tablet'), 'Paracetamol 650 mg Tablet');
+  const r = await identifyMedicine(db, { brand: '', composition: 'amoxicillin 500mg + clavulanic acid 125mg', form: '' });
+  assert.equal(r.medicine.ckey, 'amoxicillin:500mg+clavulanic acid:125mg|tablet');
+  const s = await identifyMedicine(db, { brand: '', composition: 'Amoxicillin 500mg Clavulanic Acid 125mg', form: 'tablet' });
+  assert.equal(s.medicine.ckey, 'amoxicillin:500mg+clavulanic acid:125mg|tablet');
+});
+
+test('agent: narrow-therapeutic-index medicine gets no Jan Aushadhi "cheaper" suggestion either', async () => {
+  const r = await runAgent({ DB: db, AI: null }, { text: 'Warf 5', lang: 'hi', pin: '580020' });
+  assert.equal(r.jan_aushadhi.available, false);
+  assert.equal(r.jan_aushadhi.nti, true);
+  assert.equal(r.saving.saving_pack, null);
+  assert.equal(r.kendras.items.length > 0, true);
+});
+
+test('answer: a typed generic name is not repeated as if it were a brand', async () => {
+  const r = await identifyMedicine(db, { brand: 'Amoxicillin Clavulanic Acid 500 125', composition: 'Amoxicillin 500mg Clavulanic Acid 125mg', form: 'tablet' });
+  assert.equal(r.medicine.name, 'Amoxicillin 500 mg + Clavulanic Acid 125 mg');
+  const a = composeAnswer('en', { brand: r.medicine.name, composition: r.medicine.name, count: 3, form: 'tablet' });
+  assert.doesNotMatch(a, /contains/);
+  assert.match(a, /check with your doctor/);
+});
