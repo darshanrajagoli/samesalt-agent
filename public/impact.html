@@ -12,31 +12,42 @@
   <link rel="stylesheet" href="/styles.css">
   <style>
     :root { --bar: #0a7a4b; }
-    @media (prefers-color-scheme: dark) { :root { --bar: #3aa860; } }
-    main { max-width: 760px; }
-    .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 20px 0; }
-    @media (min-width: 640px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-    .tile { background: var(--surface); border-radius: 16px; padding: 16px; min-width: 0; }
-    .tile .v { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin: 0; line-height: 1.15; }
-    .tile .l { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+    @media (prefers-color-scheme: dark) { :root { --bar: #30d158; } }
+    .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 12px; }
+    .tile { background: var(--card); border-radius: var(--radius); padding: 18px; min-width: 0; box-shadow: var(--shadow); }
+    .tile .v { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; margin: 0; line-height: 1.1; }
+    .tile .l { color: var(--muted); font-size: 13px; margin: 6px 0 0; letter-spacing: 0; line-height: 1.4; }
+    .stack { display: grid; gap: 12px; }
     .chart-wrap { position: relative; }
     .chart { width: 100%; height: 200px; display: block; }
     .chart .grid { stroke: var(--line); stroke-width: 1; }
     .chart .axis { fill: var(--muted); font: 11px var(--font); }
     .chart .bar { fill: var(--bar); }
     .chart .hit { fill: transparent; cursor: default; }
-    .chart .hit:hover + .bar, .chart .bar.on { opacity: .8; }
-    .tip { position: absolute; pointer-events: none; background: var(--text); color: var(--bg); font-size: 13px; padding: 6px 9px; border-radius: 8px; white-space: nowrap; transform: translate(-50%, -110%); opacity: 0; transition: opacity .1s; }
-    table { width: 100%; border-collapse: collapse; font-size: 15px; }
-    th, td { text-align: left; padding: 9px 0; border-top: 1px solid var(--line); }
-    th { color: var(--muted); font-weight: 500; font-size: 13px; border-top: 0; }
+    .chart .bar.on { opacity: .8; }
+    .tip { position: absolute; pointer-events: none; background: var(--text); color: var(--bg); font-size: 13px; padding: 6px 9px; border-radius: 8px; white-space: nowrap; transform: translate(-50%, -110%); opacity: 0; transition: opacity .15s; }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; letter-spacing: -0.01em; }
+    th, td { text-align: left; padding: 10px 0; border-top: 0.5px solid var(--line); }
+    th { color: var(--muted); font-weight: 500; font-size: 13px; border-top: 0; letter-spacing: 0; }
     td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-    .two { display: grid; gap: 14px; }
+    .two { display: grid; gap: 12px; }
     @media (min-width: 640px) { .two { grid-template-columns: 1fr 1fr; } }
-    .empty { color: var(--muted); padding: 8px 0; margin: 0; }
-    h2 { font-size: 17px; margin: 0 0 8px; }
-    .method { font-size: 14px; color: var(--muted); }
-    .method li { margin: 6px 0; }
+    .empty { color: var(--muted); padding: 4px 0 0; margin: 0; }
+    .card h2 { font-size: 19px; margin: 0 0 10px; }
+    .status { display: flex; gap: 14px; align-items: flex-start; }
+    .status .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #e5a50a; margin-top: 8px; box-shadow: 0 0 0 4px color-mix(in srgb, #e5a50a 22%, transparent); }
+    .status p { margin: 0; }
+    .status .sub { color: var(--muted); font-size: 14px; margin-top: 6px; letter-spacing: 0; }
+    .data { list-style: none; margin: 0; padding: 0; }
+    .data li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 12px 0; border-top: 0.5px solid var(--line); }
+    .data li:first-child { border-top: 0; padding-top: 2px; }
+    .data b { font-variant-numeric: tabular-nums; font-size: 20px; letter-spacing: -0.02em; white-space: nowrap; }
+    .data .what { min-width: 0; font-weight: 600; }
+    .data .what span { display: block; color: var(--muted); font-size: 13px; letter-spacing: 0; font-weight: 400; margin-top: 2px; line-height: 1.45; }
+    .method { font-size: 14px; color: var(--muted); letter-spacing: 0; }
+    .method ul { padding-left: 18px; margin: 0; }
+    .method li { margin: 8px 0; line-height: 1.5; }
+    .section-title { font-size: 13px; font-weight: 600; color: var(--muted); margin: 28px 4px 10px; letter-spacing: 0; }
   </style>
 </head>
 <body>
@@ -49,32 +60,44 @@
   </header>
   <main>
     <h1>Impact</h1>
-    <p class="lede">Live numbers from real lookups only. Test traffic is excluded. Nothing here can identify a person.</p>
+    <p class="lede">Live numbers from real lookups only. Test traffic is excluded, nothing is estimated, and nothing here can identify a person.</p>
 
+    <div class="card status">
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <p><b>Field pilot starts late October 2026.</b> Volunteers of Uttara Karnataka Sneha Loka (UKSL), North Karnataka, will use volunteer mode with patients. Until real people use SameSalt, the counts below stay at zero.</p>
+        <p class="sub">Disclosure: the builder's father is a trustee of UKSL.</p>
+      </div>
+    </div>
+
+    <p class="section-title">Real usage</p>
     <div class="tiles" id="tiles"></div>
 
-    <div class="card">
-      <h2>Lookups per day</h2>
-      <div class="chart-wrap" id="chartWrap"><p class="empty">Loading…</p></div>
+    <div class="stack">
+      <div class="card">
+        <h2>Lookups per day</h2>
+        <div class="chart-wrap" id="chartWrap"><p class="empty">Loading…</p></div>
+      </div>
+      <div class="two">
+        <div class="card"><h2>Languages</h2><div id="langs"></div></div>
+        <div class="card"><h2>Where (PIN prefix)</h2><div id="pins"></div></div>
+      </div>
+      <div class="card"><h2>Most-checked medicines</h2><div id="meds"></div></div>
     </div>
 
-    <div class="two" style="margin-top:14px">
-      <div class="card"><h2>Languages</h2><div id="langs"></div></div>
-      <div class="card"><h2>Where (PIN prefix)</h2><div id="pins"></div></div>
-    </div>
+    <p class="section-title">Data behind every answer</p>
+    <div class="card"><ul class="data" id="data"><li><span class="muted">Loading…</span></li></ul></div>
 
-    <div class="card" style="margin-top:14px"><h2>Most-checked medicines</h2><div id="meds"></div></div>
-
-    <div class="card method" style="margin-top:14px">
-      <h2 style="color:var(--text)">How these numbers are made</h2>
+    <p class="section-title">How these numbers are made</p>
+    <div class="card method">
       <ul>
         <li>One row per completed lookup: time, matched medicine, its price per unit, the cheapest same-salt brand and the Jan Aushadhi price per unit, language, the first 3 digits of the PIN code if typed, and an optional "did you switch?" answer.</li>
         <li>No photos (they are read in memory and discarded), names, phone numbers, IP addresses or precise locations are stored.</li>
         <li><b>Saving found</b> = (scanned brand price − cheaper of lowest-priced same-salt brand and Jan Aushadhi) per unit × units in the scanned pack. It is the saving <i>available</i> on one pack, not money actually saved.</li>
         <li><b>Reported saving</b> counts only lookups where the person tapped "Yes, I switched".</li>
-        <li>Brand prices are printed MRPs from a November 2022 dataset; Jan Aushadhi prices are from the official PMBJP list (date shown in the app).</li>
+        <li>Brand prices are printed MRPs from a November 2022 dataset; Jan Aushadhi prices are from the official PMBJP list (date above).</li>
         <li>Test traffic (automated evals, demo recordings, developer checks) is flagged and excluded: <span id="testCount">—</span> test lookups excluded so far.</li>
-        <li>Raw aggregate JSON: <a href="/api/impact">/api/impact</a></li>
+        <li>Raw aggregate JSON: <a href="/api/impact">/api/impact</a> · data status: <a href="/api/health">/api/health</a></li>
       </ul>
     </div>
   </main>
@@ -86,6 +109,18 @@
     const inr = (x) => '₹' + Math.round(+x || 0).toLocaleString('en-IN');
     const num = (x) => (+x || 0).toLocaleString('en-IN');
     const LANG = { en: 'English', kn: 'ಕನ್ನಡ (Kannada)', hi: 'हिन्दी (Hindi)' };
+
+    // Data status from the Worker's meta table (official list dates and row counts).
+    fetch('/api/health').then((r) => r.json()).then(({ meta = {} }) => {
+      const js = JSON.parse(meta.ja_stats || '{}'), ks = JSON.parse(meta.kendra_stats || '{}');
+      const fd = (iso) => (iso ? new Date(iso + 'T00:00:00+05:30').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }) : 'not loaded');
+      const rows = [
+        [num(meta.medicines_total_medicines), 'Brands with printed MRPs', `A-Z Medicine Dataset of India (${meta.medicines_dataset_date || 'November 2022'}) · ${num(meta.medicines_unique_compositions)} distinct compositions`],
+        [js.rows ? num(js.ok + js.no_equivalent) : '—', 'Jan Aushadhi medicines', js.rows ? `Official PMBJP product list, ${fd(meta.ja_list_date)} · ${num(js.ok)} match a branded composition exactly · ${num(js.unparsed)} of ${num(js.rows)} items (devices, multivitamins) left out rather than guessed` : 'Not loaded yet'],
+        [ks.loaded ? num(ks.loaded) : '—', 'Jan Aushadhi Kendras', ks.loaded ? `Official Kendra list from janaushadhi.gov.in, ${fd(meta.kendra_list_date)} · found by PIN code` : 'Not loaded yet'],
+      ];
+      $('#data').innerHTML = rows.map(([v, h, sub]) => `<li><div class="what">${esc(h)}<span>${esc(sub)}</span></div><b>${esc(v)}</b></li>`).join('');
+    }).catch(() => { $('#data').innerHTML = '<li class="muted">Could not load data status.</li>'; });
 
     const d = await fetch('/api/impact').then((r) => r.json()).catch(() => null);
     if (!d) { $('#chartWrap').innerHTML = '<p class="empty">Could not load impact data.</p>'; throw new Error('load'); }
@@ -106,7 +141,7 @@
     // Lookups per day: single series, so no legend; hover tooltip per bar; table below for exact values.
     const days = d.by_day || [];
     if (!days.length) {
-      $('#chartWrap').innerHTML = '<p class="empty">No real lookups yet. The field pilot starts in late October 2026.</p>';
+      $('#chartWrap').innerHTML = '<p class="empty">No real lookups yet.</p>';
     } else {
       const W = 700, H = 200, P = { l: 32, r: 8, t: 10, b: 24 };
       const max = Math.max(...days.map((x) => x.n), 1);

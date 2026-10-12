@@ -18,7 +18,8 @@ export const STRINGS = {
     orType: 'or type the name',
     placeholder: 'e.g. Dolo 650',
     pinLabel: 'PIN code (optional)',
-    pinHint: 'To find the nearest Jan Aushadhi Kendra',
+    pinHint: 'Optional. Add a PIN code to see the nearest Jan Aushadhi Kendras.',
+    pinShort: 'PIN code',
     check: 'Check',
     useLocation: 'Use my location',
     reading: 'Reading the strip…',
@@ -39,6 +40,11 @@ export const STRINGS = {
     kendraNeedPin: 'Add your PIN code to see the nearest Kendras.',
     kendraNone: 'No Kendra found for this PIN code in the official list.',
     kendraPending: 'The Kendra list is not loaded yet.',
+    kendraName: 'Jan Aushadhi Kendra',
+    kendraNearby: 'No Kendra with this exact PIN code; these are the closest PIN codes in the official list.',
+    jaNti: 'No alternative is suggested for this medicine. Ask your doctor before any change.',
+    jaSource: 'Official PMBJP product list, {date}',
+    kendraSource: 'Official Jan Aushadhi Kendra list, {date}',
     directions: 'Directions',
     call: 'Call',
     saveUpTo: 'Save up to {amount} on one pack',
@@ -73,7 +79,8 @@ export const STRINGS = {
     orType: 'ಅಥವಾ ಹೆಸರನ್ನು ಟೈಪ್ ಮಾಡಿ',
     placeholder: 'ಉದಾ: Dolo 650',
     pinLabel: 'ಪಿನ್ ಕೋಡ್ (ಐಚ್ಛಿಕ)',
-    pinHint: 'ಹತ್ತಿರದ ಜನ ಔಷಧಿ ಕೇಂದ್ರವನ್ನು ಹುಡುಕಲು',
+    pinHint: 'ಐಚ್ಛಿಕ. ಹತ್ತಿರದ ಜನ ಔಷಧಿ ಕೇಂದ್ರಗಳನ್ನು ನೋಡಲು ಪಿನ್ ಕೋಡ್ ನಮೂದಿಸಿ.',
+    pinShort: 'ಪಿನ್ ಕೋಡ್',
     check: 'ಪರಿಶೀಲಿಸಿ',
     useLocation: 'ನನ್ನ ಸ್ಥಳ ಬಳಸಿ',
     reading: 'ಸ್ಟ್ರಿಪ್ ಓದಲಾಗುತ್ತಿದೆ…',
@@ -94,6 +101,11 @@ export const STRINGS = {
     kendraNeedPin: 'ಹತ್ತಿರದ ಕೇಂದ್ರಗಳನ್ನು ನೋಡಲು ನಿಮ್ಮ ಪಿನ್ ಕೋಡ್ ನಮೂದಿಸಿ.',
     kendraNone: 'ಅಧಿಕೃತ ಪಟ್ಟಿಯಲ್ಲಿ ಈ ಪಿನ್ ಕೋಡ್‌ಗೆ ಯಾವುದೇ ಕೇಂದ್ರ ಸಿಗಲಿಲ್ಲ.',
     kendraPending: 'ಕೇಂದ್ರಗಳ ಪಟ್ಟಿಯನ್ನು ಇನ್ನೂ ಸೇರಿಸಿಲ್ಲ.',
+    kendraName: 'ಜನ ಔಷಧಿ ಕೇಂದ್ರ',
+    kendraNearby: 'ಈ ಪಿನ್ ಕೋಡ್‌ನಲ್ಲಿ ಕೇಂದ್ರ ಇಲ್ಲ; ಅಧಿಕೃತ ಪಟ್ಟಿಯಲ್ಲಿ ಹತ್ತಿರದ ಪಿನ್ ಕೋಡ್‌ಗಳ ಕೇಂದ್ರಗಳು ಇವು.',
+    jaNti: 'ಈ ಔಷಧಿಗೆ ಯಾವುದೇ ಬದಲಿಯನ್ನು ಸೂಚಿಸುವುದಿಲ್ಲ. ಏನೇ ಬದಲಾವಣೆಗೂ ಮೊದಲು ನಿಮ್ಮ ವೈದ್ಯರನ್ನು ಕೇಳಿ.',
+    jaSource: 'ಅಧಿಕೃತ PMBJP ಔಷಧಿ ಪಟ್ಟಿ, {date}',
+    kendraSource: 'ಅಧಿಕೃತ ಜನ ಔಷಧಿ ಕೇಂದ್ರಗಳ ಪಟ್ಟಿ, {date}',
     directions: 'ದಾರಿ ತೋರಿಸಿ',
     call: 'ಕರೆ ಮಾಡಿ',
     saveUpTo: 'ಒಂದು ಪ್ಯಾಕ್‌ನಲ್ಲಿ {amount} ವರೆಗೆ ಉಳಿಸಿ',
@@ -128,7 +140,8 @@ export const STRINGS = {
     orType: 'या नाम लिखें',
     placeholder: 'जैसे Dolo 650',
     pinLabel: 'पिन कोड (वैकल्पिक)',
-    pinHint: 'सबसे नज़दीकी जन औषधि केंद्र खोजने के लिए',
+    pinHint: 'वैकल्पिक। सबसे नज़दीकी जन औषधि केंद्र देखने के लिए पिन कोड डालें।',
+    pinShort: 'पिन कोड',
     check: 'जाँचें',
     useLocation: 'मेरी लोकेशन इस्तेमाल करें',
     reading: 'पट्टी पढ़ी जा रही है…',
@@ -149,6 +162,11 @@ export const STRINGS = {
     kendraNeedPin: 'नज़दीकी केंद्र देखने के लिए अपना पिन कोड डालें।',
     kendraNone: 'आधिकारिक सूची में इस पिन कोड के लिए कोई केंद्र नहीं मिला।',
     kendraPending: 'केंद्रों की सूची अभी जोड़ी नहीं गई है।',
+    kendraName: 'जन औषधि केंद्र',
+    kendraNearby: 'इस पिन कोड पर कोई केंद्र नहीं है; ये आधिकारिक सूची में सबसे नज़दीकी पिन कोड वाले केंद्र हैं।',
+    jaNti: 'इस दवा के लिए कोई विकल्प नहीं सुझाया जाता। कोई भी बदलाव करने से पहले अपने डॉक्टर से पूछें।',
+    jaSource: 'आधिकारिक PMBJP दवा सूची, {date}',
+    kendraSource: 'आधिकारिक जन औषधि केंद्र सूची, {date}',
     directions: 'रास्ता देखें',
     call: 'कॉल करें',
     saveUpTo: 'एक पैक पर {amount} तक बचाएँ',
@@ -187,7 +205,8 @@ export function t(lang, key, vars = {}) {
 export function rupees(x, digits = 2) {
   if (x == null || !Number.isFinite(+x)) return '—';
   const v = +x;
-  return '₹' + (v >= 100 ? Math.round(v).toLocaleString('en-IN') : v.toFixed(v < 10 ? digits : 1).replace(/\.0+$/, ''));
+  // Under ₹100: paise shown exactly (₹15.47, ₹0.33); trailing .00 dropped. ₹100 and up: whole rupees.
+  return '₹' + (v >= 100 ? Math.round(v).toLocaleString('en-IN') : v.toFixed(digits).replace(/\.00$/, ''));
 }
 
 export function unitKind(form) {
@@ -207,27 +226,27 @@ export function composeAnswer(lang, f) {
   const per = t(lang, 'perUnit')[unit];
   const L = [];
   if (lang === 'kn') {
-    L.push(`${f.brand} ನಲ್ಲಿ ${f.composition} ಇದೆ.`);
+    if (f.brand !== f.composition) L.push(`${f.brand} ನಲ್ಲಿ ${f.composition} ಇದೆ.`);
     if (f.nti) { L.push(t('kn', 'nti')); return L.join(' '); }
-    if (f.count > 1) L.push(`ಅದೇ ಸಾಲ್ಟ್ ಮತ್ತು ಅದೇ ಪ್ರಮಾಣದ ${f.count} ಬ್ರ್ಯಾಂಡ್‌ಗಳಿವೆ.`);
+    if (f.count > 1) L.push(`ಅದೇ ಸಾಲ್ಟ್ ಮತ್ತು ಅದೇ ಪ್ರಮಾಣದ ${Number(f.count).toLocaleString('en-IN')} ಬ್ರ್ಯಾಂಡ್‌ಗಳಿವೆ.`);
     if (f.cheapBrand && f.yourUnit != null) L.push(`ಅತಿ ಕಡಿಮೆ ಬೆಲೆ ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}. ${f.brand}: ${per} ${rupees(f.yourUnit)}.`);
     else if (f.cheapBrand) L.push(`ಅತಿ ಕಡಿಮೆ ಬೆಲೆ ${f.cheapBrand}: ${per} ${rupees(f.cheapUnit)}.`);
     if (f.jaUnit != null) L.push(`ಜನ ಔಷಧಿ ಕೇಂದ್ರದಲ್ಲಿ ${f.jaName}: ${per} ${rupees(f.jaUnit)}.`);
     if (f.saving > 0) L.push(`ಒಂದು ಪ್ಯಾಕ್ (${f.pack}) ಮೇಲೆ ಸುಮಾರು ${rupees(f.saving)} ಉಳಿಸಬಹುದು.`);
     L.push('ಬದಲಾಯಿಸುವ ಮೊದಲು ನಿಮ್ಮ ವೈದ್ಯರು ಅಥವಾ ಫಾರ್ಮಸಿಸ್ಟ್ ಅವರನ್ನು ಕೇಳಿ.');
   } else if (lang === 'hi') {
-    L.push(`${f.brand} में ${f.composition} है।`);
+    if (f.brand !== f.composition) L.push(`${f.brand} में ${f.composition} है।`);
     if (f.nti) { L.push(t('hi', 'nti')); return L.join(' '); }
-    if (f.count > 1) L.push(`बिल्कुल वही सॉल्ट और वही मात्रा वाले ${f.count} ब्रांड हैं।`);
+    if (f.count > 1) L.push(`बिल्कुल वही सॉल्ट और वही मात्रा वाले ${Number(f.count).toLocaleString('en-IN')} ब्रांड हैं।`);
     if (f.cheapBrand && f.yourUnit != null) L.push(`सबसे कम दाम ${f.cheapBrand} का है: ${per} ${rupees(f.cheapUnit)}, जबकि ${f.brand} ${per} ${rupees(f.yourUnit)} की है।`);
     else if (f.cheapBrand) L.push(`सबसे कम दाम ${f.cheapBrand} का है: ${per} ${rupees(f.cheapUnit)}।`);
     if (f.jaUnit != null) L.push(`जन औषधि केंद्र पर ${f.jaName}: ${per} ${rupees(f.jaUnit)}।`);
     if (f.saving > 0) L.push(`एक पैक (${f.pack}) पर लगभग ${rupees(f.saving)} बच सकते हैं।`);
     L.push('दवा बदलने से पहले अपने डॉक्टर या फ़ार्मासिस्ट से पूछें।');
   } else {
-    L.push(`${f.brand} contains ${f.composition}.`);
+    if (f.brand !== f.composition) L.push(`${f.brand} contains ${f.composition}.`);
     if (f.nti) { L.push(t('en', 'nti')); return L.join(' '); }
-    if (f.count > 1) L.push(`${f.count} brands have exactly the same salt and strength.`);
+    if (f.count > 1) L.push(`${Number(f.count).toLocaleString('en-IN')} brands have exactly the same salt and strength.`);
     if (f.cheapBrand && f.yourUnit != null) L.push(`The lowest-priced is ${f.cheapBrand} at ${rupees(f.cheapUnit)} ${per}, against ${rupees(f.yourUnit)} for ${f.brand}.`);
     else if (f.cheapBrand) L.push(`The lowest-priced is ${f.cheapBrand} at ${rupees(f.cheapUnit)} ${per}.`);
     if (f.jaUnit != null) L.push(`At a Jan Aushadhi Kendra, ${f.jaName} costs ${rupees(f.jaUnit)} ${per}.`);

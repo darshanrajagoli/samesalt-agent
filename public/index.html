@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>SameSalt — same medicine, lower price</title>
   <meta name="description" content="Scan a medicine strip. See every brand with the exact same salt and strength, the Jan Aushadhi price, and the nearest Jan Aushadhi Kendra. English, ಕನ್ನಡ, हिन्दी.">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="/manifest.webmanifest">
@@ -37,18 +37,17 @@
 
       <div class="divider"><span data-t="orType">or type the name</span></div>
 
-      <form id="typeForm" class="type-form" autocomplete="off">
-        <input id="nameInput" name="q" type="text" inputmode="text" enterkeyhint="search" data-tp="placeholder" aria-label="Medicine name" maxlength="120">
-        <button type="submit" class="secondary" data-t="check">Check</button>
-      </form>
-
-      <div class="pin-row">
-        <label for="pinInput" class="pin-label"><span data-t="pinLabel">PIN code (optional)</span><small data-t="pinHint"></small></label>
-        <div class="pin-field">
-          <input id="pinInput" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="580001" aria-label="PIN code">
-          <button type="button" id="locBtn" class="link" data-t="useLocation">Use my location</button>
+      <form id="typeForm" class="group" autocomplete="off">
+        <div class="field">
+          <input id="nameInput" name="q" type="text" inputmode="text" enterkeyhint="search" data-tp="placeholder" aria-label="Medicine name" maxlength="120">
+          <button type="submit" class="secondary" data-t="check">Check</button>
         </div>
-      </div>
+        <div class="field">
+          <label for="pinInput" class="cap" data-t="pinShort">PIN code</label>
+          <input id="pinInput" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="580020" autocomplete="postal-code">
+        </div>
+      </form>
+      <p class="field-note" data-t="pinHint"></p>
 
       <div class="volunteer-banner" id="volBanner" hidden data-t="volunteerOn"></div>
     </section>
