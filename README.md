@@ -2,11 +2,13 @@
 
 **Photograph a medicine strip (or type its name) in English, ಕನ್ನಡ or हिन्दी. SameSalt shows every brand with exactly the same salt, strength and form, ranked by price, the Jan Aushadhi generic and its government MRP, and the nearest Jan Aushadhi Kendra. Every lookup is counted anonymously on a public impact page.**
 
-**Live app:** https://samesalt-agent.samesalt-worker.workers.dev · **Impact dashboard:** https://samesalt-agent.samesalt-worker.workers.dev/impact · **Volunteer mode + QR:** https://samesalt-agent.samesalt-worker.workers.dev/volunteer
+**Demo video (2:37):** https://youtu.be/FBDnSkhKEH0 · **Live app:** https://samesalt-agent.samesalt-worker.workers.dev · **Impact dashboard:** https://samesalt-agent.samesalt-worker.workers.dev/impact · **Volunteer mode + QR:** https://samesalt-agent.samesalt-worker.workers.dev/volunteer
 
 Entry for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**, Health track ([submission #24](https://github.com/karlmehta/code-for-a-billion/issues/24)). Built in **AgentFoundry** ([how](#how-agentfoundry-was-used)). Field pilot planned with **Uttara Karnataka Sneha Loka (UKSL)**, North Karnataka, from late October 2026 ([pilot guide](docs/PILOT.md)).
 
-![SameSalt on a phone: home, the same-salt list for Dolo 650, and the answer in Kannada](docs/img/screens.png)
+![SameSalt on a phone: home, the result for Dolo 650 with the saving, and the answer in Kannada](docs/img/screens.png)
+
+[![Watch the 2:37 demo on YouTube](https://img.youtube.com/vi/FBDnSkhKEH0/hqdefault.jpg)](https://youtu.be/FBDnSkhKEH0)
 
 ---
 
@@ -24,10 +26,10 @@ The government's own Jan Aushadhi Sugam app searches generics by name. SameSalt 
 1. **Scan or type.** A photo of the strip is read by a vision model (brand, salts, strengths, form, release type). Typed names work in any script (`ಡೋಲೋ 650`, `पैन 40 टैबलेट`, `dolo650`).
 2. **Exact-composition match.** Two products match **only** if salts, strengths, dosage form and release type are all identical (`amoxicillin:500mg+clavulanic acid:125mg|tablet`). 650 mg never matches 500 mg; SR never matches plain; paracetamol + caffeine never matches paracetamol.
 3. **Ranked by price per tablet**, with "save up to ₹X on one pack".
-4. **Jan Aushadhi generic + official MRP** for the same key, from the official PMBJP list.
-5. **Nearest Jan Aushadhi Kendra** by PIN code or location, from the official Kendra list.
+4. **Jan Aushadhi generic + official MRP** for the same key, from the official PMBJP product list (downloaded 11 Oct 2026). Dolo 650 → Paracetamol Tablets IP 650 mg, ₹15.47 for 15.
+5. **Nearest Jan Aushadhi Kendra** by PIN code, from the official list of 19,986 Kendras (downloaded 12 Oct 2026), shown by Kendra code and address.
 6. **Answer in English, Kannada or Hindi**, with a Listen button (device text-to-speech).
-7. **Safety:** same salt + strength + form only; every answer ends with "check with your doctor or pharmacist before switching"; **never** dosage advice; narrow-therapeutic-index medicines (warfarin, thyroxine, antiepileptics, transplant drugs, lithium, digoxin…) get a red warning and **no** cheaper list.
+7. **Safety:** same salt + strength + form only; every answer ends with "check with your doctor or pharmacist before switching"; **never** dosage advice; narrow-therapeutic-index medicines (warfarin, thyroxine, antiepileptics, transplant drugs, lithium, digoxin…) get a red warning and **no** cheaper option of any kind (no brand list, no Jan Aushadhi price).
 8. **Show to the pharmacist** card, **"did you switch?"** tap, and **volunteer mode** with a printable QR page for NGO volunteers.
 
 ## Architecture
@@ -64,15 +66,15 @@ The agent is a **fixed, auditable tool plan** — `read_strip → identify_medic
 | `public/` | the web app, `/impact`, `/volunteer` |
 | `data/` | builds D1 seed SQL from SameSalt's database and the official PMBJP lists |
 | `.codenow/` | AgentFoundry project: agent manifest, prompts, evals + results, run traces |
-| `tools/demo-video/` | records the live app on a phone viewport (flagged as test traffic) and composes the captioned demo video |
+| `tools/demo-video/` | `record.py` records the live app on a phone viewport (2x DevTools screencast, flagged as test traffic); `compose.py` lays out the cards and captions in HTML and assembles the [demo video](https://youtu.be/FBDnSkhKEH0) with ffmpeg |
 
 **Cost: ₹0.** Cloudflare Workers + D1 + Workers AI free allocations; no paid keys. If the daily free vision quota runs out, the phone reads the photo itself with Tesseract.js and the same tools run on that text.
 
 ## Accuracy (tests and evals)
 
-- **Unit tests:** `node --import ./test/register-md.mjs --test test/normalize.test.mjs test/tools.test.mjs` → **26/26 pass** — strength normalisation (650 mg = 0.65 g = 650 MG), multi-salt order and spelling (Amoxycillin/Amoxicillin), SR vs plain, combinations vs single salts, NTI handling, PIN/location Kendra search, savings, the three-language answer, and the whole agent with a stubbed vision model. `python test/test_build_ja.py` checks the PMBJP-name parser.
+- **Unit tests:** `node --import ./test/register-md.mjs --test test/normalize.test.mjs test/tools.test.mjs` → **29/29 pass** — strength normalisation (650 mg = 0.65 g = 650 MG), multi-salt order and spelling (Amoxycillin/Amoxicillin), SR vs plain, combinations vs single salts, NTI handling, PIN/location Kendra search, savings, the three-language answer, typed generic combinations ("amoxicillin clavulanic acid 500 125 tablet"), and the whole agent with a stubbed vision model. `python test/test_build_ja.py` checks the PMBJP-name parser.
 - **Key parity:** the JavaScript key builder reproduces the Python pipeline's key on **2,000/2,000** randomly sampled database rows.
-- **End-to-end evals against the live deployment** (`node evals/run_evals.mjs`, results in [`evals/RESULTS.md`](evals/RESULTS.md)): **23/23** — 15 strip photos, 3 deliberately hard photos (heavy blur, cropped, a brand not in the database, which is matched by its printed composition) and 5 typed queries including Kannada and Hindi script. Median latency ≈ 1.7-2.7 s per lookup. One earlier run had a transient failure on the very first request after a deploy; the app and the eval runner now retry once.
+- **End-to-end evals against the live deployment** (`node evals/run_evals.mjs`, results in [`evals/RESULTS.md`](evals/RESULTS.md)): **23/23** — 15 strip photos, 3 deliberately hard photos (heavy blur, cropped, a brand not in the database, which is matched by its printed composition) and 5 typed queries including Kannada and Hindi script. Last run 12 Oct 2026, after the Jan Aushadhi data was loaded: 23/23, median 2.4 s per lookup. One earlier run had a transient failure on the very first request after a deploy; the app and the eval runner now retry once.
 - **Prompt eval in AgentFoundry:** the `understand_text` prompt passes **12/12** cases (Kannada/Hindi/Hinglish brands, "no medicine" text, prompt injection, JSON-only) on AF's served model.
 - **Honest limits:** all eval photos are **synthetic renders** (`evals/render_strips.py`), cleaner than real foil strips under shop lighting; real-world accuracy will be lower and will be measured in the pilot. Brand prices are **printed MRPs from a November 2022 dataset** — they show relative price differences well, but today's shelf price may differ.
 
@@ -81,16 +83,16 @@ The agent is a **fixed, auditable tool plan** — `read_strip → identify_medic
 | Data | Source | Date |
 |---|---|---|
 | 246,068 brands: name, manufacturer, composition, printed MRP, pack | [A-Z Medicine Dataset of India](https://www.kaggle.com/datasets/shudhanshusingh/az-medicine-dataset-of-india) (Shudhanshu Singh, CC BY-SA 4.0), normalised by [SameSalt's pipeline](https://github.com/darshanrajagoli/samesalt/tree/main/pipeline) | Nov 2022 |
-| Jan Aushadhi product basket + MRPs | PMBI / Dept. of Pharmaceuticals: [janaushadhi.gov.in — product MRP list](https://janaushadhi.gov.in/product-portfolio/product-mrp-list) | **pending load** — see below |
-| Jan Aushadhi Kendra list | PMBI: [janaushadhi.gov.in — locate Kendra](https://janaushadhi.gov.in/locate-kendra) | **pending load** — see below |
+| Jan Aushadhi product list + MRPs: 2,439 products, **1,914 loaded** | PMBI / Dept. of Pharmaceuticals: [janaushadhi.gov.in — product MRP list](https://janaushadhi.gov.in/product-portfolio/product-mrp-list), file in [`data/raw/`](data/raw/) | downloaded 11 Oct 2026 |
+| Jan Aushadhi Kendra list: 35 states/UTs, **19,986 Kendras loaded** | PMBI: [janaushadhi.gov.in — locate Kendra](https://janaushadhi.gov.in/locate-kendra), files in [`data/raw/`](data/raw/) | downloaded 12 Oct 2026 |
 
-**Status of the Jan Aushadhi data (honest):** the loader (`data/build_ja.py`, with tests) and the app paths are done and tested with fixtures, but the official lists are served from `janaushadhi.gov.in:8443`, a port that the network this was built on blocks. Until the lists are loaded, the app says "Jan Aushadhi prices are not loaded yet" instead of showing anything made up. Loading them is two commands once the files are downloaded (below), and the app shows the list date next to every Jan Aushadhi price.
+**Jan Aushadhi data (loaded, live):** the official PMBJP product list and the per-state Kendra lists are loaded into D1, and the app shows the list date under every Jan Aushadhi price and Kendra list (`/api/health` shows the dates and counts; so does the [impact page](https://samesalt-agent.samesalt-worker.workers.dev/impact)). Of 2,439 products, **1,379** map to an exact branded composition, **535** are parsed but have no branded equivalent, and **525** (multivitamins, devices, unclear strengths) are left out on purpose rather than guessed (`data/build_ja.py`, tested by `test/test_build_ja.py`). The Kendra list has PIN codes but no coordinates, so Kendras are found by PIN (same PIN first, then the nearest PIN codes); Haryana's list is empty on the official site itself. The Kendra list's name column is often the licensee's personal name, so the app shows a Kendra by its PMBJK code and address instead.
 
 ## Privacy
 
 - Photos are sent to the Worker, read in memory, and **never stored**.
 - The impact log stores, per lookup: time, matched medicine, per-unit prices (scanned, cheapest same-salt, Jan Aushadhi), the saving for one pack, language, the **first 3 digits** of the PIN code if typed, self/volunteer mode, a random per-browser token (not derived from the device) for counting unique users, and the optional "did you switch?" answer.
-- **No names, phone numbers, IP addresses, user agents or precise locations.** "Use my location" is rounded to ~1 km on the phone, used for that lookup only, and not stored.
+- **No names, phone numbers, IP addresses, user agents or precise locations.**
 - Test traffic (evals, demo recordings, developer checks: `x-samesalt-test: 1`, `?test=1`, or localhost) is flagged `is_test = 1` and **excluded from every number on [/impact](https://samesalt-agent.samesalt-worker.workers.dev/impact)**; the page shows how many test lookups were excluded.
 
 ## How AgentFoundry was used
@@ -123,11 +125,12 @@ npx wrangler d1 migrations apply samesalt-agent --remote
 cd .. && python data/build_d1.py --db ../samesalt/assets/samesalt.db --out data/build
 cd worker && for f in ../data/build/*.sql; do npx wrangler d1 execute samesalt-agent --remote --file "$f" -y; done
 
-# Jan Aushadhi data: download the product MRP list and the Kendra list from janaushadhi.gov.in
-# (PDF or the JSON the site loads) into data/raw/, then:
-cd .. && python data/build_ja.py --products data/raw/products.pdf --kendras data/raw/kendras.pdf \
-  --list-date 2026-10-20 --medicines-db ../samesalt/assets/samesalt.db
-cd worker && for f in ja kendras meta-ja; do npx wrangler d1 execute samesalt-agent --remote --file ../data/build/$f.sql -y; done
+# Jan Aushadhi data: the official files are in data/raw/ (see data/raw/README.md)
+cd .. && python data/build_ja.py --products data/raw/ja_products_2026-10-11.csv --list-date 2026-10-11 \
+  --medicines-db ../samesalt/assets/samesalt.db
+cd worker && npx wrangler d1 execute samesalt-agent --remote --file ../data/build/ja.sql -y
+cd .. && python data/build_ja.py --kendras data/raw/kendras_2026-10-12 --list-date 2026-10-12
+cd worker && for f in kendras meta-ja; do npx wrangler d1 execute samesalt-agent --remote --file ../data/build/$f.sql -y; done
 
 npx wrangler dev        # local (all local traffic is flagged as test)
 npx wrangler deploy     # https://samesalt-agent.<your-subdomain>.workers.dev
